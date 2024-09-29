@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    command: npm run start:dev
+    volumes:
+      - .:/api
+    ports:
+      - 3001:3000 # Map host port 3001 to container port 3000
+      # - 9229:9229 # Map host port 9229 to container port 9229
+    depends_on:
+      - db
+
+  db:
+    image: timescale/timescaledb-ha:pg15.8-ts2.16.1-all
+
+    environment:
+      POSTGRES_PASSWORD: example
+      # POSTGRES_PASSWORD: ${DB_PASSWORD} TODO: Add this to .env
+      POSTGRES_DB: example
+      # POSTGRES_DB: ${DB_NAME} TODO: Add this to .env
+    ports:
+      - 3002:5432 # Map host port 5432 to container port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:
