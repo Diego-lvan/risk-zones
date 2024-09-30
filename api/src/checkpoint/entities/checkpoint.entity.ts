@@ -7,7 +7,7 @@ export class Checkpoint {
     id: number;
     @Column()
     name: string;
-    @Column({type: 'point'})
+    @Column('geometry', { spatialFeatureType: 'Point', srid: 4326 })
     coords: string;
     @ManyToOne(() => User, user => user.checkpoints)
     user: User;
