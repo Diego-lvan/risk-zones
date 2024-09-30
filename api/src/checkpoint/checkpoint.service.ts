@@ -15,11 +15,18 @@ export class CheckpointService {
   ) {}
   async create(createCheckpointDto: CreateCheckpointDto) {
 
+  }
+
+  private isAbleToMakeAPoint() {
 
   }
 
-  findAll() {
-    return `This action returns all checkpoint`;
+  async findAllByUser(id: string) {
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return this.checkpointRepository.find({where: {user}});
   }
 
   findOne(id: number) {
