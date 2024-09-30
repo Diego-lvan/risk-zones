@@ -14,7 +14,7 @@ export class CheckpointController {
 
   @Get()
   findAll() {
-    return this.checkpointService.findAll();
+    //return this.checkpointService.findAll();
   }
 
   @Get(':id')
