@@ -16,17 +16,14 @@ import { RiskAreasModule } from './risk-zones/risk-areas.module';
       username: DbConstants.DB_USER,
       password: DbConstants.DB_PASSWORD,
       database: DbConstants.DB_NAME,
-      entities: [
-        User,
-        News
-      ],
+      entities: [User, News],
       synchronize: true,
       logging: false,
     }),
-    RiskAreasModule
+    RiskAreasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class AppModule {}
