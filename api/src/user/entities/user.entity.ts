@@ -4,11 +4,10 @@ import { Entity, PrimaryGeneratedColumn, OneToOne, OneToMany } from "typeorm";
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
     @OneToMany(() => News, (news) => news.user)   
     newsList: News[];
-
     @OneToMany(() => Checkpoint, (checkpoint) => checkpoint.user)
     checkpoints: Checkpoint[];
 }
