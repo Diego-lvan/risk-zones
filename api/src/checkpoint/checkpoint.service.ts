@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
 
 @Injectable()
 export class CheckpointService {
@@ -17,8 +18,16 @@ export class CheckpointService {
 
   }
 
-  private isAbleToMakeAPoint() {
-
+  private async isAbleToMakeAPoint(userId: string, checkpoint: Checkpoint) {
+    const points = await this.checkpointRepository
+    .createQueryBuilder('checkpoint')
+    .where('ST_DWithin(checkpoint.coords, :checkpointCoords, :distance)')
+    .setParameters({ checkpointCoords: checkpoint.coords, distance: MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS })
+    .getMany();
+    if (points.length > 0) {
+      return false;
+    }
+    return true;
   }
 
   async findAllByUser(id: string) {
