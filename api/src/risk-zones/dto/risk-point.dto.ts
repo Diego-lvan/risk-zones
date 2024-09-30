@@ -1,4 +1,4 @@
-import { Coordinate } from "../interfaces/coordinate";
+import { Coordinate } from '../interfaces/coordinate';
 
 export class RiskPoint {
   id: number;
