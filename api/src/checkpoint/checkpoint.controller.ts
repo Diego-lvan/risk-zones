@@ -12,9 +12,9 @@ export class CheckpointController {
     return this.checkpointService.create(createCheckpointDto);
   }
 
-  @Get()
-  findAll() {
-    //return this.checkpointService.findAll();
+  @Get('user/:id')
+  findAll(@Param('id') id: string) {
+    return this.checkpointService.findAllByUser(id);
   }
 
   @Get(':id')
