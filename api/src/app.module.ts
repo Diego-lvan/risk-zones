@@ -6,6 +6,7 @@ import { DbConstants } from './constants/db.constants';
 import { User } from './user/entities/user.entity';
 import { News } from './risk-zones/entities/news.entity';
 import { RiskAreasModule } from './risk-zones/risk-areas.module';
+import { CheckpointModule } from './checkpoint/checkpoint.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { RiskAreasModule } from './risk-zones/risk-areas.module';
       synchronize: true,
       logging: false,
     }),
-    RiskAreasModule
+    RiskAreasModule,
+    CheckpointModule
   ],
   controllers: [AppController],
   providers: [AppService],
