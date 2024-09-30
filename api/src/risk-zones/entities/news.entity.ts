@@ -1,23 +1,23 @@
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, Point, PrimaryGeneratedColumn } from "typeorm";
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, ManyToOne, Point, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class News {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ nullable: false })
-    title: string;
+  @Column({ nullable: false })
+  title: string;
 
-    @Column({ nullable: false , length: 1024})
-    content: string;
+  @Column({ nullable: false, length: 1024 })
+  content: string;
 
-    @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP'})
-    date: Date;
+  @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
+  date: Date;
 
-    @Column('geometry', {nullable: false})
-    coords: Point;
+  @Column('geometry', { nullable: false })
+  coords: Point;
 
-    @ManyToOne(() => User, (user) => user.newsList, {nullable: true})
-    user: User;
+  @ManyToOne(() => User, (user) => user.newsList, { nullable: true })
+  user: User;
 }

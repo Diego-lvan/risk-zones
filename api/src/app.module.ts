@@ -31,6 +31,6 @@ import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
   ],
   controllers: [AppController],
   providers: [AppService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class AppModule {}
