@@ -6,6 +6,8 @@ import { DbConstants } from './constants/db.constants';
 import { User } from './user/entities/user.entity';
 import { News } from './risk-zones/entities/news.entity';
 import { RiskAreasModule } from './risk-zones/risk-areas.module';
+import { CheckpointModule } from './checkpoint/checkpoint.module';
+import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
 
 @Module({
   imports: [
@@ -16,11 +18,16 @@ import { RiskAreasModule } from './risk-zones/risk-areas.module';
       username: DbConstants.DB_USER,
       password: DbConstants.DB_PASSWORD,
       database: DbConstants.DB_NAME,
-      entities: [User, News],
+      entities: [
+        User,
+        News,
+        Checkpoint
+      ],
       synchronize: true,
       logging: false,
     }),
     RiskAreasModule,
+    CheckpointModule
   ],
   controllers: [AppController],
   providers: [AppService],
