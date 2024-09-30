@@ -8,6 +8,7 @@ import { News } from './risk-zones/entities/news.entity';
 import { RiskAreasModule } from './risk-zones/risk-areas.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
       logging: false,
     }),
     RiskAreasModule,
-    CheckpointModule
+    CheckpointModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
