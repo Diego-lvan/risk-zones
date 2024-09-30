@@ -33,6 +33,6 @@ import { UserModule } from './user/user.module';
   ],
   controllers: [AppController],
   providers: [AppService],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule],
 })
 export class AppModule {}
