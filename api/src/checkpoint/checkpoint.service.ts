@@ -6,6 +6,7 @@ import { Point, Repository } from 'typeorm';
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
+import { TooClosePointsError } from './errors/too_close_points.error';
 
 @Injectable()
 export class CheckpointService {
@@ -28,7 +29,7 @@ export class CheckpointService {
     });
 
     if (!await this.isAbleToMakeAPoint(checkpoint)) {
-      throw new Error('You are too close to another checkpoint');
+      throw new TooClosePointsError();
     }
 
     return this.checkpointRepository.save(checkpoint);
@@ -53,9 +54,6 @@ export class CheckpointService {
 
   async findAllByUser(id: string) {
     const user = await this.userService.findOne(id);
-    if (!user) {
-      throw new Error('User not found');
-    }
     return this.checkpointRepository.find({where: {user}});
   }
 
