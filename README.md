@@ -8,7 +8,7 @@
 
 TODO
 
-## Development Setup with Docker (with hot reload) <a name="requirements"></a>
+## Development Setup with Docker for the database <a name="requirements"></a>
 ### First, clone the repository with git 
 ```bash 
 git clone https://github.com/Diego-lvan/price-tracker.git](https://github.com/Diego-lvan/risk-zones/
