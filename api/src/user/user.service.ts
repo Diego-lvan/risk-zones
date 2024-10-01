@@ -11,7 +11,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>
-  ){}
+  ) { }
   create(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
     return this.userRepository.save(newUser);
@@ -22,11 +22,15 @@ export class UserService {
   }
 
   async findOne(uuid: string) {
-    const user = await this.userRepository.findOneBy({id:uuid});
-    if (!user) {
+    try {
+      const user = await this.userRepository.findOneBy({ id: uuid });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
       throw new UserNotFoundError();
     }
-    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
