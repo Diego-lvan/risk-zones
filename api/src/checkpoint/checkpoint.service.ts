@@ -36,6 +36,7 @@ export class CheckpointService {
   }
 
   private async isAbleToMakeAPoint(checkpoint: Checkpoint, userId: string) {
+    // Busca los puntos que esten a cierte distancia del punto pasado como parámetro, del usuario especificado
     const points = await this.checkpointRepository
     .createQueryBuilder('checkpoint')
     .where('ST_DWithin(ST_Transform(checkpoint.coords, 3857), ST_Transform(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), 3857), :distance)')
@@ -44,7 +45,7 @@ export class CheckpointService {
       latitude: checkpoint.coords.coordinates[1],
       distance: MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS
     })
-    .where('checkpoint.user = :userId')
+    .andWhere('checkpoint.user = :userId')
     .setParameters({userId})
     .getMany();
     console.log(points);
