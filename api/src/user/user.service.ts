@@ -10,8 +10,8 @@ import { UserNotFoundError } from './errors/user_not_found.error';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>
-  ) { }
+    private userRepository: Repository<User>,
+  ) {}
   create(createUserDto: CreateUserDto) {
     const newUser = this.userRepository.create(createUserDto);
     return this.userRepository.save(newUser);
