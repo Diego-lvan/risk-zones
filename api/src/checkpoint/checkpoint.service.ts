@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { UpdateCheckpointDto } from './dto/update-checkpoint.dto';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { Point, Repository } from 'typeorm';
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
@@ -15,15 +15,36 @@ export class CheckpointService {
     private readonly checkpointRepository: Repository<Checkpoint>
   ) {}
   async create(createCheckpointDto: CreateCheckpointDto) {
+    const user = await this.userService.findOne(createCheckpointDto.userId);
+    const coordinates: Point = {
+      type: 'Point',
+      coordinates: [createCheckpointDto.longitude, createCheckpointDto.latitude]
+    };
 
+    const checkpoint = this.checkpointRepository.create({
+      name: createCheckpointDto.name,
+      coords: coordinates,
+      user
+    });
+
+    if (!await this.isAbleToMakeAPoint(checkpoint)) {
+      throw new Error('You are too close to another checkpoint');
+    }
+
+    return this.checkpointRepository.save(checkpoint);
   }
 
-  private async isAbleToMakeAPoint(userId: string, checkpoint: Checkpoint) {
+  private async isAbleToMakeAPoint(checkpoint: Checkpoint) {
     const points = await this.checkpointRepository
     .createQueryBuilder('checkpoint')
-    .where('ST_DWithin(checkpoint.coords, :checkpointCoords, :distance)')
-    .setParameters({ checkpointCoords: checkpoint.coords, distance: MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS })
+    .where('ST_DWithin(ST_Transform(checkpoint.coords, 3857), ST_Transform(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), 3857), :distance)')
+    .setParameters({
+      longitude: checkpoint.coords.coordinates[0],
+      latitude: checkpoint.coords.coordinates[1],
+      distance: MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS
+    })
     .getMany();
+    console.log(points);
     if (points.length > 0) {
       return false;
     }
