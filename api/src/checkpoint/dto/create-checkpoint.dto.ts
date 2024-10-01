@@ -1,11 +1,15 @@
-import { IsDecimal, IsString } from "class-validator";
+import { IsDecimal, IsNumber, IsString, Max, Min } from "class-validator";
 
 export class CreateCheckpointDto {
     @IsString()
     name: string;
-    @IsDecimal()
+    @IsNumber()
+    @Max(90)
+    @Min(-90)
     latitude: number;
-    @IsDecimal()
+    @IsNumber()
+    @Max(180)
+    @Min(-180)
     longitude: number;
     @IsString()
     userId: string;
