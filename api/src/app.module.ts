@@ -6,6 +6,7 @@ import { DbConstants } from './constants/db.constants';
 import { User } from './user/entities/user.entity';
 import { News } from './risk-zones/entities/news.entity';
 import { RiskAreasModule } from './risk-zones/risk-areas.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RiskAreasModule } from './risk-zones/risk-areas.module';
       logging: false,
     }),
     RiskAreasModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
