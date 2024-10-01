@@ -1,3 +1,5 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 export class DbConstants {
   static DB_HOST: string = process.env.DB_HOST || 'localhost';
   static DB_PORT: number = process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3030;
