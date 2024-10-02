@@ -3,6 +3,7 @@ import { CreateNewsDto } from './dto/create-news.dto';
 import { News } from './entities/news.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class NewsService {
@@ -14,8 +15,7 @@ export class NewsService {
 
   async createNews(createNewsDto: CreateNewsDto): Promise<News> {
     const user = await this.userService.findOne(createNewsDto.user);
-    
-    if(!user) {
+    if (!user) {
       throw new Error('User not found');
     }
     // Crear una nueva instancia de News
@@ -37,9 +37,9 @@ export class NewsService {
 
     // Guardar la noticia en la base de datos
     return this.newsRepository.save(news);
-    
   }
-  create(createNewsDto: CreateNewsDto) {
+
+  create() {
     return 'This action adds a new news';
   }
 
@@ -50,5 +50,4 @@ export class NewsService {
   findOne(id: number) {
     return `This action returns a #${id} news`;
   }
-
 }
