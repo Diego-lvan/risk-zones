@@ -10,6 +10,7 @@ import { NotificationModule } from './notification/notification.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
 import { UserModule } from './user/user.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     CheckpointModule,
     UserModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
