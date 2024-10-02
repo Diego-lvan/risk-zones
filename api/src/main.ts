@@ -7,7 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ServerConstants } from './constants/server.contants';
 
 async function bootstrap() {
-  console.log(process.env)
+  console.log(process.env);
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
