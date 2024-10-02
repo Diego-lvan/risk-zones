@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
-import { UpdateNewsDto } from './dto/update-news.dto';
 import { News } from './entities/news.entity';
 
 @Controller('news')
@@ -22,5 +21,4 @@ export class NewsController {
   findOne(@Param('id') id: string) {
     return this.newsService.findOne(+id);
   }
-
 }
