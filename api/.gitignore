@@ -43,7 +43,8 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
-
+db.constants.ts
+server.constants.ts
 # temp directory
 .temp
 .tmp
