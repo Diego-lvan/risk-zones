@@ -7,6 +7,9 @@ import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
 import { TooClosePointsError } from './errors/too_close_points.error';
+import { SendNotificationReqDto } from './dto/send-notification-req-dto';
+import { CheckPointNotFound } from './errors/checkpoint-not-found.error';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class CheckpointService {
@@ -14,6 +17,7 @@ export class CheckpointService {
     private readonly userService: UserService,
     @InjectRepository(Checkpoint)
     private readonly checkpointRepository: Repository<Checkpoint>,
+    private readonly notificationService: NotificationService,
   ) {}
   async create(createCheckpointDto: CreateCheckpointDto) {
     const user = await this.userService.findOne(createCheckpointDto.userId);
@@ -61,15 +65,16 @@ export class CheckpointService {
     return this.checkpointRepository.find({ where: { user } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} checkpoint`;
+  async findOne(id: number) {
+    return await this.checkpointRepository.findOneBy({ id });
   }
-
-  update(id: number) {
-    return `This action updates a #${id} checkpoint`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} checkpoint`;
+  async notifyCheckpointPassed(sendNotificationReqDto: SendNotificationReqDto) {
+    const checkpoint = await this.findOne(sendNotificationReqDto.checkpointId);
+    const user = await this.userService.findOne(sendNotificationReqDto.userId);
+    if (!checkpoint) throw new CheckPointNotFound();
+    await this.notificationService.sendNotification(
+      sendNotificationReqDto.contactPhone,
+      `El usuario ${user.id} ha pasado por el checkpoint ${checkpoint.name}`,
+    );
   }
 }

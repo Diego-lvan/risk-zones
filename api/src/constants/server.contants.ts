@@ -14,6 +14,12 @@ export class ServerConstants {
   static ROOT_STATIC_PATH: string = join(__dirname, '..', '..', 'static');
 }
 
+export class TwilioConstants {
+  static authToken = process.env.TWILIO_AUTH_TOKEN;
+  static accountSid = process.env.TWILIO_ACCOUNT_SID;
+  static from = process.env.TWILIO_FROM_NUMBER;
+}
+
 network.get_private_ip(function (err, ip) {
   publicIp = ip;
   ServerConstants.IP = publicIp;

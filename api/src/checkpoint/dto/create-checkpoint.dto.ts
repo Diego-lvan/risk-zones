@@ -5,7 +5,7 @@ export class CreateCheckpointDto {
   @ApiProperty({ description: 'Name of the checkpoint', example: 'Checkpoint 1' })
   @IsString()
   name: string;
-
+  
   @ApiProperty({ description: 'Latitude of the checkpoint', example: 40.416775 })
   @IsNumber()
   @Max(90)
