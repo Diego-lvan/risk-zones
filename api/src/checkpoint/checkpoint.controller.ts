@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
@@ -10,7 +11,8 @@ export class CheckpointController {
   constructor(private readonly checkpointService: CheckpointService) {}
 
   @Post()
-  create(@Body() createCheckpointDto: CreateCheckpointDto) {
+  @ApiBody({ type: CreateCheckpointDto })
+  async create(@Body() createCheckpointDto: CreateCheckpointDto) {
     return this.checkpointService.create(createCheckpointDto);
   }
 
