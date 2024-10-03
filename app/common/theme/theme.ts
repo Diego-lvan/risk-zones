@@ -8,12 +8,12 @@ interface Theme {
   };
 }
 
-const APP_THEME: Theme = {
+export const APP_THEME: Theme = {
   colors: {
-    primary: "#007bff",
-    secondary: "#6c757d",
+    primary: "black",
+    secondary: "white",
     tertiary: "#6c757d",
-    background: "#f8f9fa",
+    background: "white",
     text: "#343a40",
   },
 };
