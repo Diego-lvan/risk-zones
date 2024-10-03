@@ -18,15 +18,16 @@ export class CheckpointController {
 
   @Post('notify')
   @ApiResponse({ status: 201, description: 'Notification sent successfully' })
-  @ApiResponse({ status: 400, description: 'Notification failed' })
+  @ApiResponse({ status: 404, description: 'User not found or checkpoint not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'Could not send notification, invalid phone' })
   @ApiBody({ type: SendNotificationReqDto })
   async notifyCheckpointPassed(@Body() sendNotificationReqDto: SendNotificationReqDto, @Res() res: Response) {
     try {
       await this.checkpointService.notifyCheckpointPassed(sendNotificationReqDto);
       return res.status(201).json({ message: 'Notification sent successfully' });
     } catch (e: any) {
-      return e;
+      throw e;
     }
   }
 
