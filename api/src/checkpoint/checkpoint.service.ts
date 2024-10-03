@@ -10,6 +10,7 @@ import { TooClosePointsError } from './errors/too_close_points.error';
 import { SendNotificationReqDto } from './dto/send-notification-req-dto';
 import { CheckPointNotFound } from './errors/checkpoint-not-found.error';
 import { NotificationService } from 'src/notification/notification.service';
+import { NotificationNotSent } from './errors/notification-not-sent.error';
 
 @Injectable()
 export class CheckpointService {
@@ -72,9 +73,13 @@ export class CheckpointService {
     const checkpoint = await this.findOne(sendNotificationReqDto.checkpointId);
     const user = await this.userService.findOne(sendNotificationReqDto.userId);
     if (!checkpoint) throw new CheckPointNotFound();
-    await this.notificationService.sendNotification(
-      sendNotificationReqDto.contactPhone,
-      `El usuario ${user.id} ha pasado por el checkpoint ${checkpoint.name}`,
-    );
+    try {
+      await this.notificationService.sendNotification(
+        sendNotificationReqDto.contactPhone,
+        `El usuario ${user.id} ha pasado por el checkpoint ${checkpoint.name}`,
+      );
+    } catch (e) {
+      throw new NotificationNotSent();
+    }
   }
 }
