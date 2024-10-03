@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { UserService } from 'src/user/user.service';
 import { Point, Repository } from 'typeorm';
+
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
@@ -24,7 +25,6 @@ export class CheckpointService {
       type: 'Point',
       coordinates: [createCheckpointDto.longitude, createCheckpointDto.latitude],
     };
-
     const checkpoint = this.checkpointRepository.create({
       name: createCheckpointDto.name,
       coords: coordinates,
@@ -71,7 +71,6 @@ export class CheckpointService {
   async notifyCheckpointPassed(sendNotificationReqDto: SendNotificationReqDto) {
     const checkpoint = await this.findOne(sendNotificationReqDto.checkpointId);
     const user = await this.userService.findOne(sendNotificationReqDto.userId);
-
     if (!checkpoint) throw new CheckPointNotFound();
     await this.notificationService.sendNotification(
       sendNotificationReqDto.contactPhone,

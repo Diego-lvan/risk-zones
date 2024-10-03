@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DbConstants } from './constants/db.constants';
 import { User } from './user/entities/user.entity';
-import { News } from './risk-zones/entities/news.entity';
+import { News } from 'src/news/entities/news.entity';
 import { RiskAreasModule } from './risk-zones/risk-areas.module';
 import { NotificationModule } from './notification/notification.module';
 import { CheckpointModule } from './checkpoint/checkpoint.module';
