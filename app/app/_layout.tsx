@@ -1,3 +1,5 @@
+import { APP_THEME } from "@/common/theme/theme";
+import { AntDesign } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -5,7 +7,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -51,6 +53,24 @@ function RootLayoutNav() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="add_checkpoint"
+        options={{
+          title: "Guardar Checkpoint",
+          headerLeft: (props) => {
+            const { tintColor, canGoBack } = props;
+            return (
+              <AntDesign
+                name="left"
+                size={24}
+                color={tintColor ?? APP_THEME.colors.primary}
+                onPress={canGoBack ? () => router.back() : undefined}
+                style={{ marginRight: 10 }}
+              />
+            );
+          },
+        }}
+      />
     </Stack>
   );
 }
