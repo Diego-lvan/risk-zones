@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
-import MapView, { Circle, Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 
 export const RiskAreasScreen = () => {
@@ -22,6 +22,7 @@ export const RiskAreasScreen = () => {
         onRegionChangeComplete={(region) => {
           onChangeRadius(region);
         }}
+        rotateEnabled={false}
       >
         <Heatmap points={points} opacity={0.7} radius={20} />
       </MapView>
