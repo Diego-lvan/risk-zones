@@ -10,11 +10,13 @@ import {
 interface CustomTextInputProps {
   label?: string;
   textInputProps?: TextInputProps;
+  error?: string;
 }
 
 export const CustomTextInput = ({
   label,
   textInputProps,
+  error,
 }: CustomTextInputProps) => {
   return (
     <View style={styles.mainContainer}>
@@ -24,6 +26,7 @@ export const CustomTextInput = ({
         style={styles.textInput}
         selectionColor={"black"}
       />
+      {error && <Text style={{ color: "red" }}>{error}</Text>}
     </View>
   );
 };
