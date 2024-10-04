@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
-import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Heatmap } from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 import { APP_THEME } from "@/common/theme/theme";
 import { AddButton } from "@/common/components/add_button";
@@ -14,7 +14,6 @@ export const RiskAreasScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
-        provider={PROVIDER_GOOGLE}
         style={{
           width: Dimensions.get("window").width,
           height: Dimensions.get("window").height,
