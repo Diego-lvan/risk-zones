@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { UserService } from 'src/user/user.service';
 import { Point, Repository } from 'typeorm';
+
 import { Checkpoint } from './entities/checkpoint.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MINIMUM_DISTANCE_BETWEEN_CHECKPOINTS } from './constants/checkpoint.constants';
@@ -9,6 +10,7 @@ import { TooClosePointsError } from './errors/too_close_points.error';
 import { SendNotificationReqDto } from './dto/send-notification-req-dto';
 import { CheckPointNotFound } from './errors/checkpoint-not-found.error';
 import { NotificationService } from 'src/notification/notification.service';
+import { NotificationNotSent } from './errors/notification-not-sent.error';
 
 @Injectable()
 export class CheckpointService {
@@ -24,7 +26,6 @@ export class CheckpointService {
       type: 'Point',
       coordinates: [createCheckpointDto.longitude, createCheckpointDto.latitude],
     };
-
     const checkpoint = this.checkpointRepository.create({
       name: createCheckpointDto.name,
       coords: coordinates,
@@ -71,11 +72,14 @@ export class CheckpointService {
   async notifyCheckpointPassed(sendNotificationReqDto: SendNotificationReqDto) {
     const checkpoint = await this.findOne(sendNotificationReqDto.checkpointId);
     const user = await this.userService.findOne(sendNotificationReqDto.userId);
-
     if (!checkpoint) throw new CheckPointNotFound();
-    await this.notificationService.sendNotification(
-      sendNotificationReqDto.contactPhone,
-      `El usuario ${user.id} ha pasado por el checkpoint ${checkpoint.name}`,
-    );
+    try {
+      await this.notificationService.sendNotification(
+        sendNotificationReqDto.contactPhone,
+        `El usuario ${user.id} ha pasado por el checkpoint ${checkpoint.name}`,
+      );
+    } catch (e) {
+      throw new NotificationNotSent();
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { View, Text } from "@/components/Themed";
+import { View, Text } from "react-native";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
 import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
