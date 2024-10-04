@@ -4,12 +4,15 @@ import MapView, { Heatmap } from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 import { APP_THEME } from "@/common/theme/theme";
 import { AddButton } from "@/common/components/add_button";
+import { router } from "expo-router";
 
 export const RiskAreasScreen = () => {
   const { initialRegion, isLoading, onChangeRadius, radius, points } =
     useRiskAreas();
 
-  const onPressAddNewsButton = () => {};
+  const onPressAddNewsButton = () => {
+    router.push("/add_news");
+  };
 
   return (
     <View style={styles.container}>

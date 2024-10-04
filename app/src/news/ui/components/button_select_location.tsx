@@ -16,15 +16,16 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 8,
     height: 50,
-    justifyContent: "center",
+    justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: APP_THEME.colors.primary,
+    marginTop: 20,
   },
   text: {
     color: "white",
     textAlign: "center",
     fontSize: 16,
-    fontFamily: "StrokeWeight",
+    //fontFamily: "StrokeWeight",
   },
 });
 /**
