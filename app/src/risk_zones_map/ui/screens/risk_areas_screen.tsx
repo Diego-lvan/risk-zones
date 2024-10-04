@@ -1,16 +1,19 @@
 import { View, Text } from "react-native";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
-import MapView, { Heatmap, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Heatmap } from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import { APP_THEME } from "@/common/theme/theme";
+import { AddButton } from "@/common/components/add_button";
 
 export const RiskAreasScreen = () => {
   const { initialRegion, isLoading, onChangeRadius, radius, points } =
     useRiskAreas();
 
+  const onPressAddNewsButton = () => {};
+
   return (
     <View style={styles.container}>
       <MapView
-        provider={PROVIDER_GOOGLE}
         style={{
           width: Dimensions.get("window").width,
           height: Dimensions.get("window").height,
@@ -18,7 +21,7 @@ export const RiskAreasScreen = () => {
         initialRegion={initialRegion}
         mapType="standard"
         showsUserLocation
-        showsMyLocationButton
+        showsMyLocationButton={true}
         onRegionChangeComplete={(region) => {
           onChangeRadius(region);
         }}
@@ -39,6 +42,7 @@ export const RiskAreasScreen = () => {
           ? `${(radius / 1000).toFixed(1)} km`
           : `${radius.toFixed(0)} m`}
       </Text>
+      <AddButton onPress={onPressAddNewsButton} styles={styles.button} />
     </View>
   );
 };
@@ -58,12 +62,23 @@ const styles = StyleSheet.create({
   },
   radiusText: {
     position: "absolute",
-    bottom: 20,
+    bottom: 50 + 20 + 10,
     right: 20,
     color: "white",
     fontSize: 16,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 10,
     borderRadius: 5,
+  },
+  button: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    height: 50,
+    width: 50,
+    borderRadius: 10,
+    backgroundColor: APP_THEME.colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
