@@ -3,24 +3,46 @@ import { CustomTextInput } from "../components/custom_text_input";
 import { MapInput } from "../components/map_input";
 import { SaveCheckpointButton } from "../components/save_checkpoint_button";
 import { APP_THEME } from "@/common/theme/theme";
+import { useValidatedForm } from "../../hooks/useSaveCheckpoint";
+import { useEffect } from "react";
+import { useSelectLocation } from "@/src/common/context/location_context";
 
 export const AddCheckpointScreen = () => {
+  const { updateValue, onSubmit, errors } = useValidatedForm();
+  const { resetLocation } = useSelectLocation();
+
+  useEffect(() => {
+    return () => {
+      resetLocation();
+    };
+  }, []);
+
   return (
     <ScrollView
       contentContainerStyle={styles.mainContainer}
       style={styles.innerContainer}
     >
-      <CustomTextInput label="Nombre" />
-      <MapInput label="Selecciona la ubicación del checkpoint" />
+      <CustomTextInput
+        label="Nombre"
+        textInputProps={{
+          onChangeText: (text) => updateValue("name", text),
+          placeholder: "Nombre del checkpoint",
+        }}
+        error={errors.name?.message}
+      />
+      <MapInput
+        label="Selecciona la ubicación del checkpoint"
+        error={errors.latitude?.message}
+      />
       <View style={{ height: 20 }} />
-      <SaveCheckpointButton />
+      <SaveCheckpointButton onPress={onSubmit} />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   mainContainer: {
-    gap: 15,
+    gap: 30,
     paddingHorizontal: 30,
     paddingVertical: 20,
     alignItems: "center",
