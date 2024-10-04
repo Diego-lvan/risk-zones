@@ -1,10 +1,15 @@
 import { APP_THEME } from "@/common/theme/theme";
 import { TouchableOpacity, StyleSheet, Text } from "react-native";
 
-export const StartRouteButton = () => {
+interface StartRouteButtonProps {
+  handleOnPress: () => void;
+  isActiveRoute: boolean;
+}
+
+export const StartRouteButton = ({ handleOnPress, isActiveRoute }: StartRouteButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button}>
-      <Text style={styles.text}>Iniciar recorrido</Text>
+    <TouchableOpacity style={styles.button} onPress={handleOnPress}>
+      <Text style={styles.text}>{isActiveRoute ? "Finalizar recorrido" : "Iniciar recorrido"}</Text>
     </TouchableOpacity>
   );
 };
@@ -13,13 +18,11 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     elevation: 5,
-    width: "60%", // Un poco más pequeño que el ancho total para dejar márgenes
+    width: "50%", // Un poco más pequeño que el ancho total para dejar márgenes
     borderRadius: 8,
-    marginBottom: 25,
-    marginRight: 30,
     height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    position: "absolute",
+    bottom: 23,
     backgroundColor: APP_THEME.colors.primary,
   },
   text: {
