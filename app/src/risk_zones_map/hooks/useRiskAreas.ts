@@ -5,6 +5,7 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { RiskPoint } from "../domain/entities/risk_point_entity";
 import { Alert } from "react-native";
+import axios from "axios";
 
 const RiskAreasRepository = new RiskAreasRepositoryImpl(
   new RiskAreasDatasourceImplProd()
@@ -69,21 +70,24 @@ export const useRiskAreas = () => {
           radius
         );
       } catch (error) {
-        Alert.alert(
-          "Error",
-          "Sin conexión a internet",
-          [
-            {
-              text: "Volver a intentar",
-              onPress: () => refreshMap(radius),
-            },
-            {
-              text: "Cerrar",
-              style: "cancel",
-            },
-          ],
-          { cancelable: false }
-        );
+        console.error(error);
+        if (axios.isAxiosError(error)) {
+          Alert.alert(
+            "Error",
+            "Sin conexión a internet",
+            [
+              {
+                text: "Volver a intentar",
+                onPress: () => refreshMap(radius),
+              },
+              {
+                text: "Cerrar",
+                style: "cancel",
+              },
+            ],
+            { cancelable: false }
+          );
+        }
       }
       return [];
     };
