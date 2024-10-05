@@ -1,11 +1,8 @@
 import { APP_THEME } from "@/common/theme/theme";
+import { SelectLocationProvider } from "@/src/common/context/location_context";
 import { AntDesign } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -24,6 +21,8 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -46,7 +45,13 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SelectLocationProvider>
+        <RootLayoutNav />
+      </SelectLocationProvider>
+    </QueryClientProvider>
+  );
 }
 
 function RootLayoutNav() {
@@ -71,6 +76,7 @@ function RootLayoutNav() {
           },
         }}
       />
+      <Stack.Screen name="select_map_location"></Stack.Screen>
     </Stack>
   );
 }
