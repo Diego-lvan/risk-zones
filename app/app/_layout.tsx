@@ -1,5 +1,7 @@
 import { APP_THEME } from "@/common/theme/theme";
 import { SelectLocationProvider } from "@/src/common/context/location_context";
+import { BackArrowButton } from "@/src/common/ui/components/back_arrow_button";
+import { UserProvider, useUser } from "@/src/user/context/user_context";
 import { AntDesign } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -25,36 +27,38 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
-      <SelectLocationProvider>
-        <RootLayoutNav />
-      </SelectLocationProvider>
+      <UserProvider>
+        <SelectLocationProvider>
+          <RootLayoutNav />
+        </SelectLocationProvider>
+      </UserProvider>
     </QueryClientProvider>
   );
 }
 
 function RootLayoutNav() {
+  const [loaded, error] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    ...FontAwesome.font,
+  });
+
+  const { isLoading: isLoadingUser } = useUser();
+
+  useEffect(() => {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded && !isLoadingUser) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, isLoadingUser]);
+
+  if (!loaded || isLoadingUser) {
+    return null;
+  }
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -65,18 +69,31 @@ function RootLayoutNav() {
           headerLeft: (props) => {
             const { tintColor, canGoBack } = props;
             return (
-              <AntDesign
-                name="left"
-                size={24}
-                color={tintColor ?? APP_THEME.colors.primary}
-                onPress={canGoBack ? () => router.back() : undefined}
-                style={{ marginRight: 10 }}
-              />
+              <BackArrowButton tintColor={tintColor} canGoBack={canGoBack} />
             );
           },
         }}
       />
-      <Stack.Screen name="select_map_location"></Stack.Screen>
+      <Stack.Screen
+        name="select_map_location"
+        options={{
+          title: "Selecciona la ubicación",
+          headerLeft: (props) => {
+            const { tintColor, canGoBack } = props;
+            return (
+              <BackArrowButton tintColor={tintColor} canGoBack={canGoBack} />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="checkpoint_saved"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="save_checkpoint_error"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
     </Stack>
   );
 }

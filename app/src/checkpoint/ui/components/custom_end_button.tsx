@@ -1,16 +1,15 @@
 import { APP_THEME } from "@/common/theme/theme";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
-interface SaveCheckpointButtonProps {
+interface CustomEndButtonProps {
   onPress: () => void;
+  message: string;
 }
 
-export const SaveCheckpointButton = ({
-  onPress,
-}: SaveCheckpointButtonProps) => {
+export const CustomEndButton = ({ onPress, message }: CustomEndButtonProps) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>Guardar Checkpoint</Text>
+      <Text style={styles.text}>{message}</Text>
     </TouchableOpacity>
   );
 };
