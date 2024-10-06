@@ -3,10 +3,7 @@ import { CustomTextInput } from "../components/custom_text_input";
 import { MapInput } from "../components/map_input";
 import { CustomEndButton } from "../components/custom_end_button";
 import { APP_THEME } from "@/common/theme/theme";
-import {
-  useSaveCheckpoint,
-  useValidatedForm,
-} from "../../hooks/useSaveCheckpoint";
+import { useSaveCheckpoint } from "../../hooks/useSaveCheckpoint";
 import { useEffect } from "react";
 import { useSelectLocation } from "@/src/common/context/location_context";
 import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
