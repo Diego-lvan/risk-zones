@@ -1,14 +1,18 @@
 import { ScrollView, View, StyleSheet } from "react-native";
 import { CustomTextInput } from "../components/custom_text_input";
 import { MapInput } from "../components/map_input";
-import { SaveCheckpointButton } from "../components/save_checkpoint_button";
+import { CustomEndButton } from "../components/custom_end_button";
 import { APP_THEME } from "@/common/theme/theme";
-import { useValidatedForm } from "../../hooks/useSaveCheckpoint";
+import {
+  useSaveCheckpoint,
+  useValidatedForm,
+} from "../../hooks/useSaveCheckpoint";
 import { useEffect } from "react";
 import { useSelectLocation } from "@/src/common/context/location_context";
+import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
 
 export const AddCheckpointScreen = () => {
-  const { updateValue, onSubmit, errors } = useValidatedForm();
+  const { updateValue, onSubmit, errors, mutation } = useSaveCheckpoint();
   const { resetLocation } = useSelectLocation();
 
   useEffect(() => {
@@ -16,6 +20,10 @@ export const AddCheckpointScreen = () => {
       resetLocation();
     };
   }, []);
+
+  if (mutation.isPending) {
+    return <FullLoaderScreen />;
+  }
 
   return (
     <ScrollView
@@ -35,7 +43,7 @@ export const AddCheckpointScreen = () => {
         error={errors.latitude?.message}
       />
       <View style={{ height: 20 }} />
-      <SaveCheckpointButton onPress={onSubmit} />
+      <CustomEndButton onPress={onSubmit} message="Guardar checkpoint" />
     </ScrollView>
   );
 };
