@@ -1,79 +1,46 @@
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useSelectLocation } from "@/src/common/context/location_context";
 import { SaveCheckpointUseCase } from "../domain/use_cases/save_checkpoint_use_case";
 import { router } from "expo-router";
+import { useRef } from "react";
+import { ApiError } from "@/src/common/errors/api_error";
+import { CheckpointForm, useValidatedForm } from "./useValidatecheckpointForm";
 
-const checkpoint_schema = Yup.object().shape({
-  name: Yup.string()
-    .required("El nombre es requerido")
-    .min(3, "Mínimo 3 caracteres")
-    .max(50, "Máximo 50 caracteres"),
-  latitude: Yup.number()
-    .required("La latitud es requerida")
-    .min(-90, "Latitud mínima es -90")
-    .max(90, "Latitud máxima es 90"),
-  longitude: Yup.number()
-    .required("La longitud es requerida")
-    .min(-180, "Longitud mínima es -180")
-    .max(180, "Longitud máxima es 180"),
-});
+export const useSaveCheckpoint = () => {
+  const saveCheckpointUseCase = useRef(new SaveCheckpointUseCase()).current;
 
-export interface CheckpointForm {
-  name: string;
-  latitude: number;
-  longitude: number;
-}
+  const onSuccessfulSave = () => {
+    router.push("/checkpoint_saved");
+  };
 
-type CheckpointFormFields = keyof CheckpointForm;
-
-export const useValidatedForm = () => {
-  const {
-    setValue,
-    trigger,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CheckpointForm>({
-    resolver: yupResolver(checkpoint_schema),
-    mode: "onChange",
-  });
+  const onErrorSave = (error: Error) => {
+    if (error instanceof ApiError) {
+      if (error.statusCode >= 401) {
+        router.push("/save_checkpoint_error?known_error=false");
+      } else {
+        router.push(
+          `/save_checkpoint_error?known_error=true&message=${error.message
+            .split(" ")
+            .join("_")}`
+        );
+      }
+    } else {
+      router.push("/save_checkpoint_error?known_error=false");
+    }
+  };
 
   const mutation = useMutation({
-    mutationFn: new SaveCheckpointUseCase().execute,
+    mutationFn: (data: CheckpointForm) => saveCheckpointUseCase.execute(data),
+    onSuccess: onSuccessfulSave,
+    onError: onErrorSave,
   });
 
-  const { location } = useSelectLocation();
-
-  const updateValue = (name: CheckpointFormFields, value: string | number) => {
-    setValue(name, value);
-    trigger(name);
+  const onSubmitCallback = async (data: CheckpointForm) => {
+    await mutation.mutateAsync(data);
   };
 
-  const onSubmit = async () => {
-    if (location) {
-      updateValue("latitude", location.latitude);
-      updateValue("longitude", location.longitude);
-    }
+  const { updateValue, onSubmit, errors } = useValidatedForm({
+    onSubmitCallback,
+  });
 
-    await handleSubmit(
-      (data) => {
-        console.log(data);
-        mutation.mutate(data, {
-          onSuccess: () => {
-            console.log("success");
-          },
-          onError: () => {
-            console.log("error");
-          },
-        });
-      },
-      () => {
-        console.log("error");
-      }
-    )();
-  };
-
-  return { updateValue, onSubmit, errors };
+  return { updateValue, onSubmit, errors, mutation };
 };
