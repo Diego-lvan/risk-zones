@@ -21,9 +21,7 @@ export const useRiskAreas = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
   const [radius, setRadius] = useState<number>(20000);
-  const [points, setPoints] = useState<LatLng[]>([
-    { latitude: 0.0, longitude: 0.0 },
-  ]);
+  const [points, setPoints] = useState<LatLng[]>([]);
 
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
@@ -70,7 +68,6 @@ export const useRiskAreas = () => {
           radius
         );
       } catch (error) {
-        console.error(error);
         if (axios.isAxiosError(error)) {
           Alert.alert(
             "Error",

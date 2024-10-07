@@ -30,7 +30,9 @@ export const RiskAreasScreen = () => {
         }}
         rotateEnabled={false}
       >
-        <Heatmap points={points} opacity={0.7} radius={20} />
+        {points.length > 0 && (
+          <Heatmap points={points} opacity={0.7} radius={20} />
+        )}
       </MapView>
       {isLoading && (
         <ActivityIndicator
