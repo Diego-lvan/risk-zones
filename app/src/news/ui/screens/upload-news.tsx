@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Button, TextInput } from "react-native";
 import { ButtonSelectLocation } from "../components/button_select_location";
 import { CustomTextInput } from "../components/custom_text_input";
 import { SaveNewsButton } from "../components/save_news_button";
-import { useValidatedForm } from "../../hooks/useNews";
+import { useValidatedForm } from "../../hooks/useSaveNews";
 import { useSelectLocation } from "@/src/common/context/location_context";
 import { useEffect } from "react";
 
@@ -15,6 +15,7 @@ const UploadNewsScreen = () => {
       resetLocation();
     };
   }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Título</Text>
