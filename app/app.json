@@ -6,6 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
+    "eas": {
+      "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
+    },
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -24,7 +27,8 @@
         "googleMaps": {
           "apiKey": "GOOGLE_API_KEY"
         }
-      }
+      },
+      "permissions": ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"]
     },
     "web": {
       "bundler": "metro",
@@ -43,6 +47,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
+      }
     }
   }
 }
