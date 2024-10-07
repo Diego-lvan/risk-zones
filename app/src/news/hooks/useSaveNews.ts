@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelectLocation } from "@/src/common/context/location_context";
-import { SaveNewsUseCase } from "../domain/useCases/save_news_use_case";
-import { NewsRepository } from "../infrastructure/repositories/news_repository";
+import { SaveNewsUseCase } from "../domain/use_cases/save_news_use_case";
 
 const news_schema = Yup.object().shape({
   title: Yup.string()

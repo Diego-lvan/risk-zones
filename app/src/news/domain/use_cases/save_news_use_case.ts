@@ -1,10 +1,11 @@
-import { NewsForm } from "../../hooks/useNews";
-import { News } from "../entities/news_entity";
+import { NewsEntity } from "../entities/news_entity";
+import { NewsForm } from "../../hooks/useSaveNews";
 
 export class SaveNewsUseCase {
   //private newsRepository: NewsRepository;
+
   constructor() {
-    //this.newsRepository = new NewsRepository();
+    //this.newsRepository = newsRepository;
   }
 
   public async execute(news: NewsForm) {
@@ -17,7 +18,7 @@ export class SaveNewsUseCase {
     }
   }
 
-  private validate(news: NewsForm): News {
+  private validate(news: NewsForm): NewsEntity {
     if (!news.title || news.title.split(" ").length > 6) {
       throw new Error("Invalid title");
     }
@@ -28,9 +29,11 @@ export class SaveNewsUseCase {
     if (isNaN(publishedAt.getTime())) {
       throw new Error("Invalid published date");
     }
+    if (!news.latitude || !news.longitude) {
+      throw new Error("Invalid coordinates");
+    }
 
     return {
-      id: 0,
       title: news.title,
       description: news.description,
       date: publishedAt,
