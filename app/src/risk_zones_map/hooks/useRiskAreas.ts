@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { RiskPoint } from "../domain/entities/risk_point_entity";
 import { Alert } from "react-native";
 import axios from "axios";
+import { router } from "expo-router";
 
 const RiskAreasRepository = new RiskAreasRepositoryImpl(
   new RiskAreasDatasourceImplProd()
@@ -21,9 +22,8 @@ export const useRiskAreas = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
   const [radius, setRadius] = useState<number>(20000);
-  const [points, setPoints] = useState<LatLng[]>([
-    { latitude: 0.0, longitude: 0.0 },
-  ]);
+  const [points, setPoints] = useState<LatLng[]>([]);
+  const [riskPoints, setRiskPoints] = useState<RiskPoint[]>([]);
 
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
@@ -70,7 +70,6 @@ export const useRiskAreas = () => {
           radius
         );
       } catch (error) {
-        console.error(error);
         if (axios.isAxiosError(error)) {
           Alert.alert(
             "Error",
@@ -97,6 +96,7 @@ export const useRiskAreas = () => {
         location.longitude,
         radius
       );
+      setRiskPoints(riskPoints);
       const newPoints: LatLng[] = riskPoints.map((riskPoint) => {
         return {
           latitude: riskPoint.coords.latitude,
@@ -108,6 +108,12 @@ export const useRiskAreas = () => {
     setIsLoading(false);
   };
 
+  const onPressAddNewsButton = () => {
+    router.push("/add_news");
+  };
+
+  const handlePressNewsDetails = () => {};
+
   return {
     refreshMap,
     initialRegion,
@@ -116,5 +122,8 @@ export const useRiskAreas = () => {
     isLoading,
     points,
     location,
+    riskPoints,
+    onPressAddNewsButton,
+    handlePressNewsDetails,
   };
 };
