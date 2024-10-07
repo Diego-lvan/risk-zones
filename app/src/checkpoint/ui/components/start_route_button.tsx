@@ -8,7 +8,7 @@ interface StartRouteButtonProps {
 
 export const StartRouteButton = ({ handleOnPress, isActiveRoute }: StartRouteButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={handleOnPress}>
+    <TouchableOpacity style={[styles.button, isActiveRoute && styles.activeButton]} onPress={handleOnPress}>
       <Text style={styles.text}>{isActiveRoute ? "Finalizar recorrido" : "Iniciar recorrido"}</Text>
     </TouchableOpacity>
   );
@@ -18,12 +18,15 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     elevation: 5,
-    width: "50%", // Un poco más pequeño que el ancho total para dejar márgenes
+    width: "50%",
     borderRadius: 8,
     height: 40,
     position: "absolute",
     bottom: 23,
     backgroundColor: APP_THEME.colors.primary,
+  },
+  activeButton: {
+    backgroundColor: "red", // Cambia el color a rojo cuando está activa la ruta
   },
   text: {
     color: "white",
