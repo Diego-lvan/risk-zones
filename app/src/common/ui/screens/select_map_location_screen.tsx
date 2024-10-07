@@ -6,6 +6,7 @@ import MapView, { MapPressEvent, Marker } from "react-native-maps";
 import { useSelectLocation } from "../../context/location_context";
 import { useUserLocation } from "../../hooks/useUserLocation";
 import { APP_THEME } from "@/common/theme/theme";
+import { CustomEndButton } from "@/src/checkpoint/ui/components/custom_end_button";
 
 export const SelectMapLocationScreen = () => {
   const [currentLocation, setCurrentLocation] = useState<CoordEntity | null>(
@@ -40,30 +41,30 @@ export const SelectMapLocationScreen = () => {
 
   return (
     <View style={styles.mainContainer}>
-      <MapView
-        onPress={handleMapPress}
-        style={styles.map}
-        initialRegion={{
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          latitudeDelta: 0.002,
-          longitudeDelta: 0.002,
-        }}
-      >
-        {currentLocation && (
-          <Marker
-            coordinate={{
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude,
-            }}
-          />
-        )}
-      </MapView>
+      <View style={styles.map}>
+        <MapView
+          onPress={handleMapPress}
+          style={styles.map}
+          initialRegion={{
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+            latitudeDelta: 0.002,
+            longitudeDelta: 0.002,
+          }}
+        >
+          {currentLocation && (
+            <Marker
+              coordinate={{
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude,
+              }}
+            />
+          )}
+        </MapView>
+      </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleSave}>
-          <Text style={styles.text}>Guardar</Text>
-        </TouchableOpacity>
+        <CustomEndButton onPress={handleSave} message="Seleccionar ubicación" />
       </View>
     </View>
   );
@@ -73,9 +74,13 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     padding: 10,
+    backgroundColor: APP_THEME.colors.background,
   },
   map: {
-    flex: 2,
+    flex: 4,
+    borderWidth: 2,
+    borderColor: APP_THEME.colors.primary,
+    elevation: 5,
   },
   buttonContainer: {
     flex: 1,
