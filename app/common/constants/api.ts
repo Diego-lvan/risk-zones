@@ -1,1 +1,1 @@
-export const API_URL = "http://192.168.100.107:3040";
+export const API_URL = "https://shepherd-positive-needlessly.ngrok-free.app";
