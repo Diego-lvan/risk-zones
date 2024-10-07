@@ -1,20 +1,27 @@
 import { NewsEntity } from "../entities/news_entity";
-import { NewsForm } from "../../hooks/useSaveNews";
+import { NewsForm } from "../../hooks/useValidateNewsForm";
+import { NewsRepository } from "../repositories/news_repository";
+import { NewsDataSourceImpl } from "../../infrastructure/datasources/news_datasource";
+import { NewsRepositoryImpl } from "../../infrastructure/repositories/news_repository";
+import { ApiError } from "@/src/common/errors/api_error";
 
 export class SaveNewsUseCase {
-  //private newsRepository: NewsRepository;
+  private newsRepository: NewsRepository;
 
   constructor() {
-    //this.newsRepository = newsRepository;
+    const datasource = new NewsDataSourceImpl();
+    this.newsRepository = new NewsRepositoryImpl(datasource);
   }
 
   public async execute(news: NewsForm) {
     try {
       const newsEntity = this.validate(news);
-      //await this.newsRepository.saveNews(newsEntity);
+      await this.newsRepository.saveNews(newsEntity);
     } catch (error) {
-      console.log(error);
-      throw new Error("Error saving news");
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError("Error saving news", 500);
     }
   }
 
@@ -41,6 +48,7 @@ export class SaveNewsUseCase {
         latitude: news.latitude,
         longitude: news.longitude,
       },
+      userId: news.userId,
     };
   }
 }
