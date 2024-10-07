@@ -1,9 +1,14 @@
 import { APP_THEME } from "@/common/theme/theme";
+import { MapInput } from "@/src/checkpoint/ui/components/map_input";
+import { router } from "expo-router";
 import { TouchableOpacity, StyleSheet, Text } from "react-native";
 
 export const ButtonSelectLocation = () => {
+  const handlePress = () => {
+    router.push("/select_map_location");
+  };
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity style={styles.button} onPress={handlePress}>
       <Text style={styles.text}>Seleccionar ubicación</Text>
     </TouchableOpacity>
   );
