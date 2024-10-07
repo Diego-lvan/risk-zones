@@ -3,12 +3,13 @@ import { TouchableOpacity, StyleSheet, Text } from "react-native";
 
 interface SendFormButtonProps {
   handleOnPress: () => void;
+  text: string;
 }
 
-export const SendFormButton = ({ handleOnPress }: SendFormButtonProps) => {
+export const SendFormButton = ({ handleOnPress, text }: SendFormButtonProps) => {
   return (
     <TouchableOpacity style={styles.button} onPress={handleOnPress}>
-      <Text style={styles.text}>Aceptar</Text>
+      <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );
 };
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
   button: {
     padding: 10,
     elevation: 5,
-    width: "60%", // Un poco más pequeño que el ancho total para dejar márgenes
+    width: "40%", // Un poco más pequeño que el ancho total para dejar márgenes
     borderRadius: 8,
     marginBottom: 25,
     marginRight: 30,
