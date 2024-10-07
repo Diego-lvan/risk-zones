@@ -1,4 +1,4 @@
-export interface CoordEntity{
-    latitude: number;
-    longitude: number;
+export interface CoordEntity {
+  latitude: number;
+  longitude: number;
 }
