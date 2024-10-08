@@ -1,8 +1,6 @@
 import { CheckpointRes } from "../hooks/useSendNotification";
 import haversine from "haversine";
 
-const EARTH_RADIUS = 6371e3;
-
 export interface Coordinates {
   latitude: number;
   longitude: number;
