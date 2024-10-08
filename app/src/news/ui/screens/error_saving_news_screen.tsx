@@ -1,6 +1,7 @@
 import { Modal, View, Text, StyleSheet } from "react-native";
 import { CustomEndButton } from "../../../../src/checkpoint/ui/components/custom_end_button";
 import { APP_THEME } from "@/common/theme/theme";
+import { router } from "expo-router";
 
 interface SaveNewsConfirmationProps {
   isVisible: boolean;
@@ -11,12 +12,15 @@ export const SaveNewsConfirmation = ({
   isVisible,
   onClose,
 }: SaveNewsConfirmationProps) => {
+  const handlePress = () => {
+    router.dismissAll();
+  };
   return (
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.title}>Noticia subida correctamente</Text>
-          <CustomEndButton onPress={onClose} message="Aceptar" />
+          <CustomEndButton onPress={handlePress} message="Aceptar" />
         </View>
       </View>
     </Modal>
