@@ -1,52 +1,49 @@
-import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { View, Text, StyleSheet } from "react-native";
+import { Modal, View, Text, StyleSheet } from "react-native";
 import { CustomEndButton } from "../../../../src/checkpoint/ui/components/custom_end_button";
 import { APP_THEME } from "@/common/theme/theme";
 
-interface SaveNewsScreenProps {
-  isKnownError: boolean;
-  errorMessage: string;
+interface SaveNewsConfirmationProps {
+  isVisible: boolean;
+  onClose: () => void;
 }
 
-export const SaveNewsErrorScreen = ({
-  isKnownError,
-  errorMessage,
-}: SaveNewsScreenProps) => {
-  const handleOnPress = () => {
-    if (isKnownError) {
-      router.back();
-    } else {
-      router.dismissAll();
-    }
-  };
-
-  const message = isKnownError ? "Volver a intentar" : "Intentar más tarde";
-
+export const SaveNewsConfirmation = ({
+  isVisible,
+  onClose,
+}: SaveNewsConfirmationProps) => {
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1 }} />
-      <AntDesign name="closecircleo" size={180} color="red" />
-      <Text style={styles.title}>{errorMessage}</Text>
-      <View style={{ flex: 2 }} />
-      <CustomEndButton onPress={handleOnPress} message={message} />
-    </View>
+    <Modal visible={isVisible} transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.title}>Noticia subida correctamente</Text>
+          <CustomEndButton onPress={onClose} message="Aceptar" />
+        </View>
+      </View>
+    </Modal>
   );
 };
 
+export default SaveNewsConfirmation;
+
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: APP_THEME.colors.background,
-    padding: 25,
-    gap: 25,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro transparente
+  },
+  modalContainer: {
+    width: 300, // Ancho de la ventana emergente
+    padding: 20,
+    backgroundColor: APP_THEME.colors.background, // Color de fondo del modal
+    borderRadius: 10,
+    alignItems: "center",
+    gap: 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     textAlign: "center",
     fontWeight: "bold",
-    marginTop: 10,
+    color: "green", // Cambia a verde para indicar éxito
   },
 });
