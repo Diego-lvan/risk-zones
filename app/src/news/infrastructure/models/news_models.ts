@@ -1,7 +1,10 @@
 export interface NewsModel {
   title: string;
-  description: string;
-  latitude: number;
-  longitude: number;
-  userId: string;
+  content: string;
+  point: {
+    latitude: number;
+    longitude: number;
+  };
+  user: string;
+  date: string;
 }
