@@ -16,8 +16,8 @@ export const checkpointNear = (checkpoint: CheckpointRes[], curLocation: Coordin
     };
     const distance = haversine(curLocation, checkpointCoords, { unit: "meter" });
     console.log(`Distance to checkpoint ${checkpoint[i].id}: ${distance} meters`);
-    if (distance <= 50) {
-      return checkpoint[i].id;
+    if (distance <= 30) {
+      return checkpoint[i].id.valueOf();
     }
   }
 
