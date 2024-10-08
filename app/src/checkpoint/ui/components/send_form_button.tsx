@@ -4,11 +4,12 @@ import { TouchableOpacity, StyleSheet, Text } from "react-native";
 interface SendFormButtonProps {
   handleOnPress: () => void;
   text: string;
+  disabled: boolean;
 }
 
-export const SendFormButton = ({ handleOnPress, text }: SendFormButtonProps) => {
+export const SendFormButton = ({ handleOnPress, text, disabled }: SendFormButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={handleOnPress}>
+    <TouchableOpacity disabled={disabled} style={styles.button} onPress={handleOnPress}>
       <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );
