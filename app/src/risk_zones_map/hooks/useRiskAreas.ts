@@ -28,9 +28,11 @@ export const useRiskAreas = () => {
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
     const radiusInMeters = (region.latitudeDelta * 98000) / 2;
-    setRadius(radiusInMeters);
-    setLocation({ latitude: region.latitude, longitude: region.longitude });
-    refreshMap(radiusInMeters);
+    if (Math.abs(radius - radiusInMeters) > 50) {
+      setRadius(radiusInMeters);
+      setLocation({ latitude: region.latitude, longitude: region.longitude });
+      refreshMap(radiusInMeters);
+    }
   };
 
   const getActualLocation = async () => {
