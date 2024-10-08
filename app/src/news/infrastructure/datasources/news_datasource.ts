@@ -9,15 +9,20 @@ export class NewsDataSourceImpl implements NewsDataSource {
   async saveNews(news: NewsEntity): Promise<void> {
     const newsModel: NewsModel = {
       title: news.title,
-      description: news.description,
-      latitude: news.coords.latitude,
-      longitude: news.coords.longitude,
-      userId: news.userId,
+      content: news.description,
+      point: {
+        latitude: news.coords.latitude,
+        longitude: news.coords.longitude,
+      },
+      user: news.userId,
+      date: new Date().toISOString(),
     };
 
-    console.log("saveNews");
+    console.log("Datos que se envían al backend:", newsModel);
     try {
       const { status } = await axios.post(`${API_URL}/news`, newsModel);
+      console.log(status);
+      console.log("Datos que se envían al backend:", newsModel);
       if (status !== 201) {
         throw new Error();
       }
@@ -26,6 +31,8 @@ export class NewsDataSourceImpl implements NewsDataSource {
       const message = apiError.response
         ? (apiError.response.data as { message: string }).message
         : "Error desconocido";
+      console.log("Error al guardar la noticia:", apiError.response?.data);
+
       throw new ApiError(message, apiError.response?.status || 500);
     }
   }
