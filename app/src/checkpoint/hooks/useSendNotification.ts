@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 import * as Notifications from "expo-notifications";
-import { API_URL } from "@/common/constants/api";
 import { checkpointNear } from "../utils/checkpoint-near";
-import axios from "axios";
 import { useUser } from "@/src/user/context/user_context";
-import Constants from "expo-constants";
 import { NotificationDataSourceImpl } from "../infrastructure/datasources/notification_datasource";
 import { PROJECT_ID } from "@/common/constants/projectId";
 import { NotificationEntity } from "../domain/entities/notification_entity";
@@ -49,7 +46,7 @@ export const useFormNotification = (
 ): UseFormNotificationReturn => {
   const [contactPhone, setContactPhone] = useState<string>("");
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [locationInterval, setLocationInterval] = useState<NodeJS.Timeout | null>(null);
+  const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
   const [checkpoints, setCheckpoints] = useState<CheckpointRes[]>([]);
 
   const notificationDataSourceImpl = new NotificationDataSourceImpl();
@@ -78,20 +75,25 @@ export const useFormNotification = (
       return;
     }
 
-    const interval = setInterval(async () => {
-      const currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation(currentLocation);
-      console.log("Ubicación actual:", currentLocation);
-      console.log({ checkpoints });
-    }, 5000);
+    const subscription = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        timeInterval: 5000,
+        distanceInterval: 5,
+      },
+      (currentLocation) => {
+        setLocation(currentLocation);
+        console.log("Location updated:", currentLocation);
+      }
+    );
 
-    setLocationInterval(interval);
+    setLocationSubscription(subscription);
   };
 
   const stopTrackingLocation = () => {
-    if (locationInterval) {
-      clearInterval(locationInterval);
-      setLocationInterval(null);
+    if (locationSubscription) {
+      locationSubscription.remove();
+      setLocationSubscription(null);
     }
     console.log("stopped tracking location");
   };
@@ -184,14 +186,6 @@ export const useFormNotification = (
   useEffect(() => {
     sendNotification();
   }, [location]);
-
-  useEffect(() => {
-    return () => {
-      if (locationInterval) {
-        clearInterval(locationInterval);
-      }
-    };
-  }, [locationInterval]);
 
   useEffect(() => {
     registerForPushNotificationsAsync();
