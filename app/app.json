@@ -1,23 +1,4 @@
 {
-  "build": {
-    "preview": {
-      "android": {
-        "buildType": "apk"
-      }
-    },
-    "preview2": {
-      "android": {
-        "gradleCommand": ":app:assembleRelease"
-      }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "preview4": {
-      "distribution": "internal"
-    },
-    "production": {}
-  },
   "expo": {
     "name": "app",
     "slug": "app",
@@ -25,9 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "eas": {
-      "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
-    },
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -72,7 +50,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
+        "projectId": "8a75e2e6-7a84-4a21-a497-56cba4a75174"
       }
     }
   }
