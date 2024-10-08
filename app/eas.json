@@ -10,8 +10,8 @@
     },
     "preview": {
       "distribution": "internal",
-      "buildType": {
-        "android": "apk"
+      "android": {
+        "buildType": "apk"
       },
       "env": {
         "GOOGLE_API_KEY": "EXPO_PUBLIC_MAPS_KEY"
