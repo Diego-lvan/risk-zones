@@ -6,6 +6,9 @@ import { checkpointNear } from "../utils/checkpoint-near";
 import axios from "axios";
 import { useUser } from "@/src/user/context/user_context";
 import Constants from "expo-constants";
+import { NotificationDataSourceImpl } from "../infrastructure/datasources/notification_datasource";
+import { PROJECT_ID } from "@/common/constants/projectId";
+import { NotificationEntity } from "../domain/entities/notification_entity";
 
 interface UseFormNotificationProps {
   setIsModalVisible: (visible: boolean) => void;
@@ -49,8 +52,10 @@ export const useFormNotification = (
   const [locationInterval, setLocationInterval] = useState<NodeJS.Timeout | null>(null);
   const [checkpoints, setCheckpoints] = useState<CheckpointRes[]>([]);
 
+  const notificationDataSourceImpl = new NotificationDataSourceImpl();
+
   const { user } = useUser();
-  console.log("user:", user);
+  console.log({ user });
 
   const handleContactPhoneChange = (text: string) => {
     setContactPhone(text);
@@ -59,16 +64,10 @@ export const useFormNotification = (
 
   const fetchCheckpoints = async () => {
     try {
-      const response = await axios.get(`${API_URL}/checkpoint/user/${user?.id}`);
-      const data = await response.data;
-
-      if (response.status !== 200) {
-        console.error("Error al obtener los checkpoints:", data);
-        return;
-      }
-      setCheckpoints(data);
+      const response = await notificationDataSourceImpl.fetchCheckpoints(user?.id || "");
+      setCheckpoints(response);
     } catch (error) {
-      console.error("Error en el fetch de checkpoints:", error);
+      console.error("Error al obtener los checkpoints:", error);
     }
   };
 
@@ -127,7 +126,7 @@ export const useFormNotification = (
     try {
       token = (
         await Notifications.getExpoPushTokenAsync({
-          projectId: Constants.expoConfig?.extra?.eas?.projectId ?? "", // Accede al projectId desde la configuración de Expo
+          projectId: PROJECT_ID,
         })
       ).data;
       console.log("Push token:", token);
@@ -148,11 +147,12 @@ export const useFormNotification = (
       if (checkpoint !== null) {
         console.log("enviando notificación del checkpoint:", checkpoint);
         try {
-          const res = await axios.post(`${API_URL}/checkpoint/notify`, {
+          const notification: NotificationEntity = {
             checkpointId: checkpoint,
             contactPhone,
-            userId: user?.id,
-          });
+            userId: user?.id || "",
+          };
+          await notificationDataSourceImpl.sendNotification(notification);
 
           // Notificación de éxito
           const checkpointName = checkpoints.find((c) => c.id === checkpoint)?.name;
