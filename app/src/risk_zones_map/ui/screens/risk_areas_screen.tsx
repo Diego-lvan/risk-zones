@@ -1,6 +1,11 @@
 import { View, Text, Button } from "react-native";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
-import MapView, { Callout, Heatmap, Marker } from "react-native-maps";
+import MapView, {
+  Callout,
+  Heatmap,
+  Marker,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 import { APP_THEME } from "@/common/theme/theme";
 import { AddButton } from "@/common/components/add_button";
@@ -40,6 +45,7 @@ export const RiskAreasScreen = () => {
           onChangeRadius(region);
         }}
         rotateEnabled={false}
+        provider={PROVIDER_GOOGLE}
       >
         {points.length > 0 && (
           <Heatmap points={points} opacity={0.7} radius={20} />
