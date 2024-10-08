@@ -9,12 +9,13 @@ import {
 import { ButtonSelectLocation } from "../components/button_select_location";
 import { CustomTextInput } from "../components/custom_text_input";
 import { SaveNewsButton } from "../components/save_news_button";
-import { useValidatedForm } from "../../hooks/useSaveNews";
 import { useSelectLocation } from "@/src/common/context/location_context";
 import { useEffect } from "react";
+import { useValidatedForm } from "../../hooks/useValidateNewsForm";
+import { useSaveNews } from "../../hooks/useSaveNews";
 
 const UploadNewsScreen = () => {
-  const { updateValue, onSubmit, errors } = useValidatedForm();
+  const { updateValue, onSubmit, errors } = useSaveNews();
   const { resetLocation } = useSelectLocation();
 
   useEffect(() => {

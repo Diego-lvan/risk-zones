@@ -32,14 +32,17 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const loadUser = async () => {
     setLoadingFunction();
     let user = await SecureStorage.getItemAsync("user");
+    console.log("Imprimiendo user", user);
     if (!user) {
       try {
         const userUseCase = new GetUserUseCase();
         const newUser = await userUseCase.execute();
         setUser(newUser);
+        console.log("Imprimiendo newUser", newUser);
         await SecureStorage.setItemAsync("user", JSON.stringify(newUser));
       } catch (error) {
         console.log(error);
+        console.log("Error al obtener el usuario");
       }
     } else {
       setUser(JSON.parse(user));
