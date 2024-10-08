@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { Coordinate } from 'src/risk-zones/interfaces/coordinate';
+//import { Coordinate } from 'src/risk-zones/interfaces/coordinate';
 
 export class CreateNewsDto {
   @ApiProperty({ description: 'Título de la noticia' })
@@ -19,7 +19,10 @@ export class CreateNewsDto {
 
   @ApiProperty({ description: 'Coordenadas del punto asociado a la noticia' })
   @ValidateNested()
-  point: Coordinate;
+  point: {
+    latitude: number;
+    longitude: number;
+  };
 
   @ApiProperty({ description: 'User id that made the news' })
   @IsString()
