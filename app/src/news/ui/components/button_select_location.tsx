@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: APP_THEME.colors.primary,
-    marginTop: 20,
+    marginTop: 50,
   },
   text: {
     color: "white",

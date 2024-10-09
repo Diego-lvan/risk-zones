@@ -41,5 +41,5 @@ export const useSaveNews = () => {
     onSubmitCallback,
   });
 
-  return { updateValue, onSubmit, errors };
+  return { updateValue, onSubmit, errors, mutation };
 };
