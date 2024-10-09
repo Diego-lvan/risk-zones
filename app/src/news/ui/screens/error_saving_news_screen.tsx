@@ -13,6 +13,7 @@ export const SaveNewsConfirmation = ({
   onClose,
 }: SaveNewsConfirmationProps) => {
   const handlePress = () => {
+    onClose();
     router.dismissAll();
   };
   return (
