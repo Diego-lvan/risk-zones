@@ -1,6 +1,11 @@
 export default ({ config }) => {
   return {
     ...config,
+    expo: {
+      ...config.expo,
+      name: "Safe Zones",
+      slug: "safezones",
+    },
     android: {
       ...config.android,
       package: "com.tsp.safezones",
