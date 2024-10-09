@@ -21,12 +21,5 @@ export default ({ config }) => {
         googleMapsApiKey: process.env.EXPO_PUBLIC_MAPS_KEY,
       },
     },
-    expo: {
-      extra: {
-        eas: {
-          projectId: "0483ce6e-1742-48e6-94d7-964a99ebea74",
-        },
-      },
-    },
   };
 };
