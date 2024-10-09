@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Safe Zones",
-    "slug": "safezones",
+    "slug": "safe-zones",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -47,7 +47,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "owner": "lorenzotrujillo"
+    }
   }
 }

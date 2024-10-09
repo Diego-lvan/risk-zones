@@ -4,7 +4,7 @@ export default ({ config }) => {
     expo: {
       ...config.expo,
       name: "Safe Zones",
-      slug: "safezones",
+      slug: "app",
     },
     android: {
       ...config.android,
@@ -25,7 +25,6 @@ export default ({ config }) => {
     expo: {
       extra: {
         eas: {
-          slug: "safezones",
           projectId: "0483ce6e-1742-48e6-94d7-964a99ebea74",
         },
       },
