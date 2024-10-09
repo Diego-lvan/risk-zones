@@ -21,6 +21,7 @@ export default ({ config }) => {
         googleMapsApiKey: process.env.EXPO_PUBLIC_MAPS_KEY,
       },
     },
+    owner: "lorenzotrujillo",
     expo: {
       extra: {
         eas: {
