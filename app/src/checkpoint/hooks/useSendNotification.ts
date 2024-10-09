@@ -69,7 +69,7 @@ export const useFormNotification = (
   };
 
   const startTrackingLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
+    const { status } = await Location.requestBackgroundPermissionsAsync();
     if (status !== "granted") {
       console.log("Permission to access location was denied");
       return;
