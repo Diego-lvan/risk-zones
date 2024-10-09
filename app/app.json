@@ -47,6 +47,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "21c0d4f4-17e2-4cbe-93f5-3a452355d90c"
+      }
+    },
+    "owner": "lorenzotrujillo"
   }
 }

@@ -1,11 +1,6 @@
 export default ({ config }) => {
   return {
     ...config,
-    expo: {
-      ...config.expo,
-      name: "Safe Zones",
-      slug: "app",
-    },
     android: {
       ...config.android,
       package: "com.tsp.safezones",
@@ -19,14 +14,6 @@ export default ({ config }) => {
       ...config.ios,
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_MAPS_KEY,
-      },
-    },
-    owner: "lorenzotrujillo",
-    expo: {
-      extra: {
-        eas: {
-          projectId: "0483ce6e-1742-48e6-94d7-964a99ebea74",
-        },
       },
     },
   };
