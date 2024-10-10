@@ -49,6 +49,9 @@ const UploadNewsScreen = () => {
         error={errors.description?.message}
       />
       <ButtonSelectLocation />
+      {errors.latitude?.message && (
+        <Text style={styles.msjError}>{errors.latitude?.message}</Text>
+      )}
       <SaveNewsButton
         onPress={() => {
           onSubmit();
@@ -80,6 +83,10 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
+  },
+  msjError: {
+    color: "red",
+    marginTop: 10,
   },
 });
 
