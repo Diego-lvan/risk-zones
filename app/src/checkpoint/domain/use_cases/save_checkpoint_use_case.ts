@@ -1,5 +1,5 @@
 import { ApiError } from "@/src/common/errors/api_error";
-import { CheckpointForm } from "../../hooks/useSaveCheckpoint";
+import { CheckpointForm } from "../../hooks/useValidatecheckpointForm";
 import { CheckpointDataSourceImpl } from "../../infrastructure/datasources/checkpoint_datasource";
 import { CheckpointRepositoryImpl } from "../../infrastructure/repositories/checkpoint_repository";
 import { CheckpointEntity } from "../entities/checkpoint_entity";
@@ -27,18 +27,10 @@ export class SaveCheckpointUseCase {
     if (!checkpoint.name || checkpoint.name.length < 3) {
       throw new Error("Invalid name");
     }
-    if (
-      !checkpoint.latitude ||
-      checkpoint.latitude < -90 ||
-      checkpoint.latitude > 90
-    ) {
+    if (!checkpoint.latitude || checkpoint.latitude < -90 || checkpoint.latitude > 90) {
       throw new Error("Invalid latitude");
     }
-    if (
-      !checkpoint.longitude ||
-      checkpoint.longitude < -180 ||
-      checkpoint.longitude > 180
-    ) {
+    if (!checkpoint.longitude || checkpoint.longitude < -180 || checkpoint.longitude > 180) {
       throw new Error("Invalid longitude");
     }
 
