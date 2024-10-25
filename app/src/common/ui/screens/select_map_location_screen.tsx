@@ -14,16 +14,14 @@ export const SelectMapLocationScreen = () => {
   );
   const { getUserLocation } = useUserLocation();
   const { setLocation } = useSelectLocation();
-  const isLocationSet = useRef(false);
 
   const handleMapPress = (event: MapPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    isLocationSet.current = true;
     setCurrentLocation({ latitude, longitude });
   };
 
   const handleSave = () => {
-    if (isLocationSet.current && currentLocation) {
+    if (currentLocation) {
       setLocation(currentLocation);
     }
     router.back();

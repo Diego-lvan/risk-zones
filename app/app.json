@@ -1,14 +1,11 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "Safe Zones",
+    "slug": "safe-zones",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "eas": {
-      "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
-    },
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -25,14 +22,13 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAPlC-ebxdARqQWxfBPuwOS3OoAfESICgs"
+          "apiKey": "EXPO_PUBLIC_MAPS_KEY"
         }
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
-      ],
-      "package": "com.diegoeas.app"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -54,8 +50,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a2fadd2e-47c4-42a3-a5a9-519da164e026"
+        "projectId": "21c0d4f4-17e2-4cbe-93f5-3a452355d90c"
       }
-    }
+    },
+    "owner": "lorenzotrujillo"
   }
 }
