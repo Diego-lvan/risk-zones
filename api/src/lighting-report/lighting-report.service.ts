@@ -14,15 +14,6 @@ export class LightingReportService {
   ) {}
 
   async createLightingReport(createLightingReportDto: CreateLightingReportDto): Promise<LightingReport> {
-    // Validar que el título no exceda de 6 palabras
-    if (this.countWords(createLightingReportDto.title) > 6) {
-      throw new Error('Title exceeds 6 words');
-    }
-    // Validar que el contenido no exceda de 50 palabras
-    if (this.countWords(createLightingReportDto.content) > 50) {
-      throw new Error('Content exceeds 50 words');
-    }
-
     const user = await this.userService.findOne(createLightingReportDto.user);
     if (!user) {
       throw new Error('User not found');
@@ -30,34 +21,25 @@ export class LightingReportService {
 
     // Crear una nueva instancia de LightingReport
     const lightingReport = new LightingReport();
-    lightingReport.title = createLightingReportDto.title;
-    lightingReport.content = createLightingReportDto.content;
 
     // Asignar las coordenadas en formato tipo Point
-    lightingReport.startPoint = {
+    lightingReport.startCoords = {
       type: 'Point',
-      coordinates: [createLightingReportDto.startPoint.longitude, createLightingReportDto.startPoint.latitude],
+      coordinates: [createLightingReportDto.startCoords.longitude, createLightingReportDto.startCoords.latitude],
     };
-    lightingReport.endPoint = {
+    lightingReport.endCoords = {
       type: 'Point',
-      coordinates: [createLightingReportDto.endPoint.longitude, createLightingReportDto.endPoint.latitude],
+      coordinates: [createLightingReportDto.endCoords.longitude, createLightingReportDto.endCoords.latitude],
     };
 
     // Asignar el usuario al reporte de iluminación
     lightingReport.user = user;
 
     // Asignar la fecha actual
-    lightingReport.date = new Date();
+    lightingReport.created_at = new Date();
 
     // Guardar el reporte de iluminación en la base de datos
     return this.lightingReportRepository.save(lightingReport);
-  }
-  // Método para contar las palabras
-  private countWords(text: string): number {
-    return text.split(' ').filter((word) => word.length > 0).length;
-  }
-  create() {
-    return 'This action adds a new lightingReport';
   }
 
   findAll() {
