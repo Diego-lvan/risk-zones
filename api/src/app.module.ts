@@ -11,6 +11,7 @@ import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
 import { UserModule } from './user/user.module';
 import { NewsModule } from './news/news.module';
+import { LightingReportModule } from './lighting-report/lighting-report.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NewsModule } from './news/news.module';
     CheckpointModule,
     UserModule,
     NewsModule,
+    LightingReportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
