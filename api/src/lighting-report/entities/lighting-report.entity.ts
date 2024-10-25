@@ -5,6 +5,12 @@ export class LightingReport {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: false })
+  title: string;
+
+  @Column({ nullable: false, length: 1024 })
+  content: string;
+
   @Column('geometry', { nullable: false })
   startPoint: Point;
 
