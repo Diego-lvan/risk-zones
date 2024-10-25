@@ -11,8 +11,8 @@ export class LightedStreetsService {
   async getLightedStreets(lat: number, long: number, radius: number): Promise<LightedStreetDTO[]> {
     const lightedStreetsEntities = await this.lightedStreetRepository
       .createQueryBuilder('lighted_street')
-      .where(`ST_DWithin(startCoords,ST_MakePoint(:long, :lat)::geography,:radius)`, { long, lat, radius })
-      .orWhere(`ST_DWithin(endCoords,ST_MakePoint(:long, :lat)::geography,:radius)`, { long, lat, radius })
+      .where(`ST_DWithin("startCoords",ST_MakePoint(:long, :lat)::geography,:radius)`, { long, lat, radius })
+      .orWhere(`ST_DWithin("endCoords",ST_MakePoint(:long, :lat)::geography,:radius)`, { long, lat, radius })
       .getMany();
 
     const lightedStreets: LightedStreetDTO[] = lightedStreetsEntities.map((street): LightedStreetDTO => {
