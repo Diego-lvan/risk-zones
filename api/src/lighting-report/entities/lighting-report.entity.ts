@@ -5,14 +5,20 @@ export class LightingReport {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('geometry', { nullable: false })
-  startCoords: Point;
+  @Column({ nullable: false })
+  title: string;
+
+  @Column({ nullable: false, length: 1024 })
+  content: string;
 
   @Column('geometry', { nullable: false })
-  endCoords: Point;
+  startPoint: Point;
+
+  @Column('geometry', { nullable: false })
+  endPoint: Point;
 
   @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  date: Date;
 
   @ManyToOne(() => User, (user) => user.lightingReportList, { nullable: true })
   user: User;
