@@ -12,6 +12,7 @@ import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
 import { UserModule } from './user/user.module';
 import { NewsModule } from './news/news.module';
 import { LightingReportModule } from './lighting-report/lighting-report.module';
+import { LightingReport } from './lighting-report/entities/lighting-report.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { LightingReportModule } from './lighting-report/lighting-report.module';
       username: DbConstants.DB_USER,
       password: DbConstants.DB_PASSWORD,
       database: DbConstants.DB_NAME,
-      entities: [User, News, Checkpoint],
+      entities: [User, News, Checkpoint, LightingReport],
       synchronize: true,
       logging: false,
     }),

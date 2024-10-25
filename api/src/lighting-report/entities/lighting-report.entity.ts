@@ -1,6 +1,7 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, ManyToOne, Point, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, Point, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class LightingReport {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,5 +17,4 @@ export class LightingReport {
 
   @ManyToOne(() => User, (user) => user.lightingReportList, { nullable: true })
   user: User;
-  lightingReport: Promise<User>;
 }
