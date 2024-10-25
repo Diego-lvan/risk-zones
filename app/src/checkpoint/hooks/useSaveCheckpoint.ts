@@ -17,11 +17,7 @@ export const useSaveCheckpoint = () => {
       if (error.statusCode >= 401) {
         router.push("/save_checkpoint_error?known_error=false");
       } else {
-        router.push(
-          `/save_checkpoint_error?known_error=true&message=${error.message
-            .split(" ")
-            .join("_")}`
-        );
+        router.push(`/save_checkpoint_error?known_error=true&message=${error.message.split(" ").join("_")}`);
       }
     } else {
       router.push("/save_checkpoint_error?known_error=false");

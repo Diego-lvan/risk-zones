@@ -11,4 +11,8 @@ export class CheckpointRepositoryImpl implements CheckpointRepository {
   async saveCheckpoint(checkpoint: CheckpointEntity): Promise<void> {
     return await this.dataSource.saveCheckpoint(checkpoint);
   }
+
+  async fetchCheckpoints(userId: string): Promise<CheckpointEntity[]> {
+    return await this.dataSource.fetchCheckpoints(userId);
+  }
 }
