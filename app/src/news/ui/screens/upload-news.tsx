@@ -13,9 +13,10 @@ import { useSelectLocation } from "@/src/common/context/location_context";
 import { useEffect } from "react";
 import { useValidatedForm } from "../../hooks/useValidateNewsForm";
 import { useSaveNews } from "../../hooks/useSaveNews";
+import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
 
 const UploadNewsScreen = () => {
-  const { updateValue, onSubmit, errors } = useSaveNews();
+  const { updateValue, onSubmit, errors, mutation } = useSaveNews();
   const { resetLocation } = useSelectLocation();
 
   useEffect(() => {
@@ -23,7 +24,9 @@ const UploadNewsScreen = () => {
       resetLocation();
     };
   }, []);
-
+  if (mutation.isPending) {
+    return <FullLoaderScreen></FullLoaderScreen>;
+  }
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.label}>Título</Text>
@@ -46,6 +49,9 @@ const UploadNewsScreen = () => {
         error={errors.description?.message}
       />
       <ButtonSelectLocation />
+      {errors.latitude?.message && (
+        <Text style={styles.msjError}>{errors.latitude?.message}</Text>
+      )}
       <SaveNewsButton
         onPress={() => {
           onSubmit();
@@ -77,6 +83,10 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
+  },
+  msjError: {
+    color: "red",
+    marginTop: 10,
   },
 });
 

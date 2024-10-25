@@ -17,7 +17,7 @@ const news_schema = Yup.object().shape({
     }),
   date: Yup.date().required("La fecha es requerida"),
   latitude: Yup.number()
-    .required("La latitud es requerida")
+    .required("La ubicación es requerida")
     .min(-90, "Latitud mínima es -90")
     .max(90, "Latitud máxima es 90"),
   longitude: Yup.number()

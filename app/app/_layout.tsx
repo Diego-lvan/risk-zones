@@ -93,7 +93,7 @@ function RootLayoutNav() {
       <Stack.Screen
         name="save_checkpoint_error"
         options={{
-          title: "Ventana de noticia subida correctamente",
+          title: "",
         }}
       ></Stack.Screen>
       <Stack.Screen
