@@ -22,4 +22,5 @@ export class LightingReport {
 
   @ManyToOne(() => User, (user) => user.lightingReportList, { nullable: true })
   user: User;
+  lightingReport: Promise<User>;
 }
