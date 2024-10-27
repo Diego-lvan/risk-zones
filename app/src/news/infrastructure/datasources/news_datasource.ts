@@ -4,8 +4,36 @@ import { API_URL } from "@/common/constants/api";
 import { NewsModel } from "../models/news_models";
 import { ApiError } from "@/src/common/errors/api_error";
 import { NewsEntity } from "@/src/news/domain/entities/news_entity";
+import { NewInfoEntity } from "../../domain/entities/see_new_entity";
+import { NewInfoModel } from "../models/new_info_model";
 
 export class NewsDataSourceImpl implements NewsDataSource {
+  async getNewInfo(newId: number): Promise<NewInfoEntity> {
+    try {
+      const { data, status } = await axios.get<NewInfoModel>(
+        `${API_URL}/news/${newId}`
+      );
+      console.log("Datos que se reciben del backend:", data);
+      if (status !== 200) {
+        throw new Error();
+      }
+      const news: NewInfoEntity = {
+        id: data.id,
+        title: data.title,
+        description: data.content,
+        createdAt: new Date(data.createdAt),
+      };
+      console.log("Datos que se reciben del backend:", news);
+      return news;
+    } catch (error) {
+      const apiError = error as AxiosError;
+      const message = apiError.response
+        ? (apiError.response.data as { message: string }).message
+        : "Error desconocido";
+      console.log("Error al obtener la noticia:", apiError.response?.status);
+      throw new ApiError(message, apiError.response?.status || 500);
+    }
+  }
   async saveNews(news: NewsEntity): Promise<void> {
     const newsModel: NewsModel = {
       title: news.title,
