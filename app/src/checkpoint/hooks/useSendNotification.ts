@@ -56,11 +56,9 @@ export const useFormNotification = (
   const checkpointDataSourceImpl = new CheckpointDataSourceImpl();
 
   const { user } = useUser();
-  console.log({ user });
 
   const handleContactPhoneChange = (text: string) => {
     setContactPhone(text);
-    console.log(text);
   };
 
   const fetchCheckpoints = async () => {
