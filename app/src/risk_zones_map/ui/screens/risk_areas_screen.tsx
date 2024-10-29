@@ -9,6 +9,7 @@ import MapView, {
 import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
 import { APP_THEME } from "@/common/theme/theme";
 import { AddButton } from "@/common/components/add_button";
+import { RiskPointMarker } from "../components/risk_point_marker";
 
 export const RiskAreasScreen = () => {
   const {
@@ -52,22 +53,7 @@ export const RiskAreasScreen = () => {
         )}
 
         {riskPoints.map((point, index) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: point.coords.latitude,
-              longitude: point.coords.longitude,
-            }}
-            anchor={{ x: 0.5, y: 0.1 }}
-            style={{ opacity: 0 }}
-          >
-            <Callout>
-              <View>
-                <Text>Nombre: {point.title}</Text>
-                <Button title="Detalles" onPress={handlePressNewsDetails} />
-              </View>
-            </Callout>
-          </Marker>
+          <RiskPointMarker key={index} point={point} />
         ))}
       </MapView>
       {isLoading && (

@@ -104,6 +104,18 @@ function RootLayoutNav() {
         name="news_saved"
         options={{ headerShown: false }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="see_new_details/[id]"
+        options={{
+          title: "Detalles de la noticia",
+          headerLeft: (props) => {
+            const { tintColor, canGoBack } = props;
+            return (
+              <BackArrowButton tintColor={tintColor} canGoBack={canGoBack} />
+            );
+          },
+        }}
+      />
     </Stack>
   );
 }
