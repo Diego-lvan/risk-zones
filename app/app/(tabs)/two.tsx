@@ -1,5 +1,5 @@
-import { CheckpointScreen } from "@/src/checkpoint/ui/screens/checkpoint_screen";
+import { LightedStreetsScreen } from "@/src/lighted_streets/ui/screens/lighted_streets_screen";
 
 export default function TabTwoScreen() {
-  return <CheckpointScreen />;
+  return <LightedStreetsScreen />;
 }

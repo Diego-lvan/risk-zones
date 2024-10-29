@@ -6,6 +6,9 @@ import { useUser } from "@/src/user/context/user_context";
 import { NotificationDataSourceImpl } from "../infrastructure/datasources/notification_datasource";
 import { PROJECT_ID } from "@/common/constants/projectId";
 import { NotificationEntity } from "../domain/entities/notification_entity";
+import { CheckpointDataSourceImpl } from "../infrastructure/datasources/checkpoint_datasource";
+import { CheckpointEntity } from "../domain/entities/checkpoint_entity";
+import { Checkpoint } from "../domain/entities/checkpoint";
 
 interface UseFormNotificationProps {
   setIsModalVisible: (visible: boolean) => void;
@@ -26,7 +29,7 @@ interface UseFormNotificationReturn {
   handleContactPhoneChange: (text: string) => void;
   handlePressStartRoute: () => void;
   location: Location.LocationObject | null;
-  checkpoints: CheckpointRes[];
+  checkpoints: CheckpointEntity[];
   stopTrackingLocation: () => void;
 }
 
@@ -47,21 +50,20 @@ export const useFormNotification = (
   const [contactPhone, setContactPhone] = useState<string>("");
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
-  const [checkpoints, setCheckpoints] = useState<CheckpointRes[]>([]);
+  const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
 
   const notificationDataSourceImpl = new NotificationDataSourceImpl();
+  const checkpointDataSourceImpl = new CheckpointDataSourceImpl();
 
   const { user } = useUser();
-  console.log({ user });
 
   const handleContactPhoneChange = (text: string) => {
     setContactPhone(text);
-    console.log(text);
   };
 
   const fetchCheckpoints = async () => {
     try {
-      const response = await notificationDataSourceImpl.fetchCheckpoints(user?.id || "");
+      const response = await checkpointDataSourceImpl.fetchCheckpoints(user?.id || "");
       setCheckpoints(response);
     } catch (error) {
       console.error("Error al obtener los checkpoints:", error);
