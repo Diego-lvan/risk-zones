@@ -9,6 +9,11 @@ interface SeeNewDetailsProps {
   newId: number;
 }
 
+/**
+ * Pantalla que muestra los detalles de una noticia
+ * @param newId Identificador de la noticia
+ * @returns Pantalla con los detalles de la noticia
+ */
 export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
   const { query } = useLoadNews(newId);
   if (query.isLoading) {

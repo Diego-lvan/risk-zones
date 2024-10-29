@@ -3,6 +3,10 @@ import { NewsEntity } from "../../domain/entities/news_entity";
 import { NewInfoEntity } from "../../domain/entities/see_new_entity";
 import { NewsRepository } from "../../domain/repositories/news_repository";
 
+/**
+ * Clase que implementa el repositorio de noticias
+ * @param dataSource Fuente de datos de noticias
+ */
 export class NewsRepositoryImpl implements NewsRepository {
   private readonly dataSource: NewsDataSource;
 

@@ -7,7 +7,15 @@ import { NewsEntity } from "@/src/news/domain/entities/news_entity";
 import { NewInfoEntity } from "../../domain/entities/see_new_entity";
 import { NewInfoModel } from "../models/new_info_model";
 
+/**
+ * Clase que implementa la fuente de datos de noticias
+ */
 export class NewsDataSourceImpl implements NewsDataSource {
+  /**
+   * Metodo que obtiene la información de una noticia
+   * @param newId Identificador de la noticia
+   * @returns Una promesa con la información de la noticia
+   */
   async getNewInfo(newId: number): Promise<NewInfoEntity> {
     try {
       const { data, status } = await axios.get<NewInfoModel>(
