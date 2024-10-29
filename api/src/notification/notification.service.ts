@@ -16,12 +16,15 @@ export class NotificationService {
 
   async sendNotification(toNumber: string, message: string) {
     toNumber = `+52${toNumber}`;
-    this.client.messages
-      .create({
+    try {
+      const messageResponse = await this.client.messages.create({
         from: TwilioConstants.from,
         body: message,
         to: toNumber,
-      })
-      .then((message) => console.log(message.sid));
+      });
+      console.log(messageResponse.sid);
+    } catch (error) {
+      console.error('Failed to send notification:', error);
+    }
   }
 }
