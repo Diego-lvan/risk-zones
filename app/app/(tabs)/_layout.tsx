@@ -30,6 +30,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="two"
         options={{
+          title: "Iluminación",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="map-marker" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="three"
+        options={{
           title: "Checkpoints",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="map-marker" color={color} />
