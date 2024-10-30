@@ -54,18 +54,18 @@ export const useLightedStreets = () => {
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
     const radiusInMeters = (region.latitudeDelta * 98000) / 2;
-    if (
-      Math.abs(radiusInMeters - radius) >= 50 &&
-      location &&
-      getDistance(
+    if (location) {
+      const distance = getDistance(
         location.latitude,
         location.longitude,
         region.latitude,
         region.longitude
-      ) >= 50
-    ) {
-      setRadius(radiusInMeters);
-      setLocation({ latitude: region.latitude, longitude: region.longitude });
+      );
+      console.log(`La distancia es de ${distance}`);
+      if (Math.abs(radiusInMeters - radius) >= 100 || distance >= 100) {
+        setRadius(radiusInMeters);
+        setLocation({ latitude: region.latitude, longitude: region.longitude });
+      }
     }
   };
 
