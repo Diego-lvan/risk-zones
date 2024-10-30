@@ -25,11 +25,6 @@ export class LightedStreetsController {
     return this.lightedStreetsService.createLightingReport(createLightingReportDto);
   }
 
-  @Get()
-  findAll() {
-    return this.lightedStreetsService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.lightedStreetsService.findOne(+id);
