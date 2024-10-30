@@ -61,7 +61,6 @@ export const useLightedStreets = () => {
         region.latitude,
         region.longitude
       );
-      console.log(`La distancia es de ${distance}`);
       if (Math.abs(radiusInMeters - radius) >= 100 || distance >= 100) {
         setRadius(radiusInMeters);
         setLocation({ latitude: region.latitude, longitude: region.longitude });
