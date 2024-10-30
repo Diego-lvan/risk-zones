@@ -165,6 +165,11 @@ export const useLightedStreets = () => {
     }
   }, [location, radius]);
 
+  // Función que se realiza al presionar el botón de añadir noticia
+  const onPressAddLightedStreetsButton = () => {
+    //router.push("/add_news");
+  };
+
   return {
     refreshMap,
     initialRegion,
@@ -173,5 +178,6 @@ export const useLightedStreets = () => {
     radius,
     lightedStreetsPoints,
     location,
+    onPressAddLightedStreetsButton,
   };
 };
