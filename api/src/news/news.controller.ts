@@ -3,6 +3,7 @@ import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { News } from './entities/news.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { NewNotFoundError } from './errors/new_not_found';
 
 /**
  * Controller for handling news-related operations.
@@ -27,27 +28,24 @@ export class NewsController {
   create(@Body() createNewsDto: CreateNewsDto): Promise<News> {
     return this.newsService.createNews(createNewsDto);
   }
+  @Get(':id')
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({ status: 200, description: 'The found new' })
+  @ApiResponse({ status: 404, description: 'New not found' })
+  async getNew(@Param('id') newId: string) {
+    try {
+      return await this.newsService.getNew(+newId);
+    } catch (error) {
+      throw new NewNotFoundError();
+    }
+  }
 
   /**
    * Retrieves all news articles.
    * @returns An array of all news articles.
    */
   @Get()
-  findAll() {
+  async findAll() {
     return this.newsService.findAll();
-  }
-
-  /**
-   * Retrieves a specific news article by its ID.
-   * @param id - The ID of the news article.
-   * @returns The news article with the specified ID.
-   */
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a news article by ID' })
-  @ApiParam({ name: 'id', description: 'News article ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Returns the news article', type: News })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'News article not found' })
-  findOne(@Param('id') id: string) {
-    return this.newsService.findOne(+id);
   }
 }

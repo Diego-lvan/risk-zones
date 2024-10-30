@@ -6,11 +6,13 @@ import { router } from "expo-router";
 interface SaveNewsConfirmationProps {
   isVisible: boolean;
   onClose: () => void;
+  message?: string;
 }
 
 export const SaveNewsConfirmation = ({
   isVisible,
   onClose,
+  message,
 }: SaveNewsConfirmationProps) => {
   const handlePress = () => {
     onClose();

@@ -4,6 +4,8 @@ import { News } from './entities/news.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
+import { NewNotFoundError } from './errors/new_not_found';
+import { PublicNewResponse } from './dto/public-new-response';
 
 @Injectable()
 export class NewsService {
@@ -59,7 +61,22 @@ export class NewsService {
     return `This action returns all news`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} news`;
+  /**
+   * Method to find a news by its id
+   * @param id The id of the news to find
+   * @returns A news with the given id or an error if not found
+   */
+  async getNew(newId: number) {
+    try {
+      const news = await this.newsRepository.findOneByOrFail({ id: newId });
+      // Parse the news to a PublicNewResponse object
+      const responseNews = PublicNewResponse.from(news);
+      return responseNews;
+    } catch (error) {
+      throw new NewNotFoundError();
+    }
   }
 }
+
+// user: tspTeam
+// password: OUugFvdepv2QtOYyXgR9ptJnriB
