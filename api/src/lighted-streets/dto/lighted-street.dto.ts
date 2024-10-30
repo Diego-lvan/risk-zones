@@ -1,4 +1,4 @@
-import { Coordinate } from 'src/risk-zones/interfaces/coordinate';
+import { Coordinate } from 'src/common/interfaces/coordinate';
 
 export class LightedStreetDTO {
   id: string;
