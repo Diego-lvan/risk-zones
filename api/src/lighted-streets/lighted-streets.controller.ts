@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { LightedStreetsService } from './lighted-streets.service';
+import { CreateLightingReportDto } from './dto/create-lighting-report.dto';
 
 @Controller('lighted-streets')
 @ApiTags('Lighted Streets')
@@ -17,5 +18,20 @@ export class LightedStreetsController {
     @Query('radius') radius: number,
   ) {
     return this.lightedStreetsService.getLightedStreets(latitude, longitude, radius);
+  }
+
+  @Post()
+  create(@Body() createLightingReportDto: CreateLightingReportDto) {
+    return this.lightedStreetsService.createLightingReport(createLightingReportDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.lightedStreetsService.findOne(+id);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.lightedStreetsService.remove(+id);
   }
 }

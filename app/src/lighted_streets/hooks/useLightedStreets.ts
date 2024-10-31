@@ -28,11 +28,42 @@ export const useLightedStreets = () => {
     LightedStreetPoints[]
   >([]);
 
+  const getDistance = (
+    startLatitude: number,
+    startLongitude: number,
+    endLatitude: number,
+    endLongitude: number
+  ): number => {
+    const R = 6378.137;
+    const dLat =
+      (endLatitude * Math.PI) / 180 - (startLatitude * Math.PI) / 180;
+    const dLon =
+      (endLongitude * Math.PI) / 180 - (startLongitude * Math.PI) / 180;
+    var a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((startLatitude * Math.PI) / 180) *
+        Math.cos((endLatitude * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d * 1000;
+  };
+
   // Función que detecta cuando el usuario mueve el mapa y calcula el radio en base a la pantalla
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
     const radiusInMeters = (region.latitudeDelta * 98000) / 2;
-    if (Math.abs(radiusInMeters - radius) >= 50) {
+    if (
+      Math.abs(radiusInMeters - radius) >= 50 &&
+      location &&
+      getDistance(
+        location.latitude,
+        location.longitude,
+        region.latitude,
+        region.longitude
+      ) >= 50
+    ) {
       setRadius(radiusInMeters);
       setLocation({ latitude: region.latitude, longitude: region.longitude });
     }

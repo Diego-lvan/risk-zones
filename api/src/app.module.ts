@@ -11,8 +11,6 @@ import { CheckpointModule } from './checkpoint/checkpoint.module';
 import { Checkpoint } from './checkpoint/entities/checkpoint.entity';
 import { UserModule } from './user/user.module';
 import { NewsModule } from './news/news.module';
-import { LightingReportModule } from './lighting-report/lighting-report.module';
-import { LightingReport } from './lighting-report/entities/lighting-report.entity';
 import { LightedStreet } from './lighted-streets/entities/lighted_street.entity';
 import { LightedStreetModule } from './lighted-streets/lighted-streets.module';
 
@@ -25,7 +23,7 @@ import { LightedStreetModule } from './lighted-streets/lighted-streets.module';
       username: DbConstants.DB_USER,
       password: DbConstants.DB_PASSWORD,
       database: DbConstants.DB_NAME,
-      entities: [User, News, Checkpoint, LightingReport, LightedStreet],
+      entities: [User, News, Checkpoint, LightedStreet],
       synchronize: true,
       logging: false,
     }),
@@ -34,7 +32,6 @@ import { LightedStreetModule } from './lighted-streets/lighted-streets.module';
     CheckpointModule,
     UserModule,
     NewsModule,
-    LightingReportModule,
     LightedStreetModule,
   ],
   controllers: [AppController],
