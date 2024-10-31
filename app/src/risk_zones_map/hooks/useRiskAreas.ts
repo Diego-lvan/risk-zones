@@ -7,6 +7,7 @@ import { RiskPoint } from "../domain/entities/risk_point_entity";
 import { Alert } from "react-native";
 import axios, { AxiosError } from "axios";
 import { router } from "expo-router";
+import * as SecureStorage from "expo-secure-store";
 
 const RiskAreasRepository = new RiskAreasRepositoryImpl(
   new RiskAreasDatasourceImplProd()
@@ -125,19 +126,38 @@ export const useRiskAreas = () => {
   const refreshMap = async (radius: number) => {
     setIsLoading(true);
     if (location) {
-      const riskPoints = await getRiskPoints(
+      const newRiskPoints = await getRiskPoints(
         location.latitude,
         location.longitude,
         radius
       );
-      setRiskPoints(riskPoints);
-      const newPoints: LatLng[] = riskPoints.map((riskPoint) => {
-        return {
-          latitude: riskPoint.coords.latitude,
-          longitude: riskPoint.coords.longitude,
-        };
-      });
-      setPoints(newPoints);
+      if (newRiskPoints.length > 0) {
+        setRiskPoints(newRiskPoints);
+        const newPoints: LatLng[] = newRiskPoints.map((riskPoint) => {
+          return {
+            latitude: riskPoint.coords.latitude,
+            longitude: riskPoint.coords.longitude,
+          };
+        });
+        await SecureStorage.setItemAsync(
+          "riskPoints",
+          JSON.stringify(newRiskPoints)
+        );
+        setPoints(newPoints);
+      } else if (riskPoints.length === 0) {
+        const savedPoints = await SecureStorage.getItemAsync("riskPoints");
+        if (savedPoints) {
+          const parsedPoints = JSON.parse(savedPoints) as RiskPoint[];
+          setRiskPoints(parsedPoints);
+          const newPoints: LatLng[] = parsedPoints.map((riskPoint) => {
+            return {
+              latitude: riskPoint.coords.latitude,
+              longitude: riskPoint.coords.longitude,
+            };
+          });
+          setPoints(newPoints);
+        }
+      }
     }
     setIsLoading(false);
   };
