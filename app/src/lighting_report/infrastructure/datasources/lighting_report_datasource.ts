@@ -25,7 +25,7 @@ export class LightingReportDataSourceImpl implements LightingReportDataSource {
     console.log("Datos que se envían al backend:", lighting_reportModel);
     try {
       const { status } = await axios.post(
-        `${API_URL}/lighting-report`,
+        `${API_URL}/lighted-streets`,
         lighting_reportModel
       );
       console.log(status);
