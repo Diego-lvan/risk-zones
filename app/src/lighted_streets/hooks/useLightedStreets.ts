@@ -11,6 +11,7 @@ import { LightedStreetPoints } from "../domain/entities/lighted_street_points";
 import { StreetPointsRepositoryImpl } from "../infraestructure/repositories/street_points_repository";
 import { StreetPointsDatasourceImpl } from "../infraestructure/datasources/street_points_datasource";
 import { router } from "expo-router";
+import { useLightedStreetsContext } from "../context/lightes_streets_context";
 
 const lightedStreetsRepository = new LightedStreetsRepositoryImpl(
   new LightedStreetsDatasourceImpl()
@@ -25,9 +26,7 @@ export const useLightedStreets = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
   const [radius, setRadius] = useState<number>(200);
-  const [lightedStreetsPoints, setLightedStreetsPoints] = useState<
-    LightedStreetPoints[]
-  >([]);
+  const { lightedStreetsPoints, setStreetsPoints } = useLightedStreetsContext();
 
   const getDistance = (
     startLatitude: number,
@@ -126,7 +125,7 @@ export const useLightedStreets = () => {
       const newLightedStreetPoints: LightedStreetPoints[] = await getPoints(
         lightedStreets
       );
-      setLightedStreetsPoints(newLightedStreetPoints);
+      setStreetsPoints(newLightedStreetPoints);
     }
     setIsLoading(false);
   };
@@ -163,6 +162,7 @@ export const useLightedStreets = () => {
   useEffect(() => {
     if (location) {
       refreshMap(radius);
+      console.log(lightedStreetsPoints);
     }
   }, [location, radius]);
 
