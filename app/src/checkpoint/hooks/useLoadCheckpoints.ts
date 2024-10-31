@@ -13,7 +13,9 @@ import { CheckpointDataSourceImpl } from "../infrastructure/datasources/checkpoi
 import { CheckpointEntity } from "../domain/entities/checkpoint_entity";
 import { useUser } from "@/src/user/context/user_context";
 
-const CheckpointRepository = new CheckpointRepositoryImpl(new CheckpointDataSourceImpl());
+const CheckpointRepository = new CheckpointRepositoryImpl(
+  new CheckpointDataSourceImpl()
+);
 // Interface usada en el mapa de calor
 export interface LatLngName {
   latitude: number;
@@ -22,21 +24,10 @@ export interface LatLngName {
 }
 
 // Hook personalizado usado para controlar la pantalla del mapa de zonas de riesgo
-export const useRiskAreas = () => {
-  const [location, setLocation] = useState<LatLngName | null>(null);
+export const useLoadCheckpoints = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
-  const [radius, setRadius] = useState<number>(20000);
-  const [points, setPoints] = useState<LatLngName[]>([]);
   const [checkpoints, setCheckpoints] = useState<CheckpointEntity[]>([]);
-
-  // Función que detecta cuando el usuario mueve el mapa y calcula el radio en base a la pantalla
-  const onChangeRadius = (region: Region) => {
-    if (isLoading) return;
-    const radiusInMeters = (region.latitudeDelta * 98000) / 2;
-    setRadius(radiusInMeters);
-    setLocation({ latitude: region.latitude, longitude: region.longitude, name: "" });
-  };
 
   // Función que obtiene la uicación actual del usuario
   const getActualLocation = async () => {
@@ -46,11 +37,10 @@ export const useRiskAreas = () => {
     }
 
     const location = await Location.getCurrentPositionAsync({});
-    setLocation({ ...location.coords, name: "" });
     setInitialRegion({
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
-      latitudeDelta: (radius * 2) / 98000,
+      latitudeDelta: 0.005,
       longitudeDelta: 0.005,
     });
   };
@@ -64,15 +54,9 @@ export const useRiskAreas = () => {
     initializeMap();
   }, []);
 
-  // Función que se ejecuta cuando cambia la ubicación en el mapa
-  // Refresca el mapa de zonas inseguras alrededor de la ubicación
-  useEffect(() => {
-    if (location) {
-      refreshMap(radius);
-    }
-  }, [location, radius]);
-
-  const getCheckpoints = async (userId: string): Promise<CheckpointEntity[]> => {
+  const getCheckpoints = async (
+    userId: string
+  ): Promise<CheckpointEntity[]> => {
     try {
       return await CheckpointRepository.fetchCheckpoints(userId);
     } catch (error) {
@@ -85,7 +69,7 @@ export const useRiskAreas = () => {
             [
               {
                 text: "Volver a intentar",
-                onPress: () => refreshMap(radius),
+                onPress: () => refreshMap(),
               },
               {
                 text: "Cerrar",
@@ -101,7 +85,7 @@ export const useRiskAreas = () => {
             [
               {
                 text: "Volver a intentar",
-                onPress: () => refreshMap(radius),
+                onPress: () => refreshMap(),
               },
               {
                 text: "Cerrar",
@@ -117,42 +101,18 @@ export const useRiskAreas = () => {
   };
   const { user } = useUser();
 
-  // Función usada para refrescar el mapa de zonas de riesgo en base al radio
-  const refreshMap = async (radius: number) => {
+  const refreshMap = async () => {
+    console.log("refreshMap");
     setIsLoading(true);
-    if (location) {
-      const checkpoints = await getCheckpoints(user?.id || "");
-      setCheckpoints(checkpoints);
-      const newPoints: LatLngName[] = checkpoints.map((checkpoint) => {
-        return {
-          latitude: checkpoint.coords.latitude,
-          longitude: checkpoint.coords.longitude,
-          name: checkpoint.name,
-        };
-      });
-      setPoints(newPoints);
-    }
+    const checkpoints = await getCheckpoints(user?.id || "");
+    setCheckpoints(checkpoints);
     setIsLoading(false);
   };
-
-  // Función que se realiza al presionar el botón de añadir noticia
-  const onPressAddNewsButton = () => {
-    router.push("/add_news");
-  };
-
-  // Función para ser usada cuando se desee conocer los detalles de una noticia
-  const handlePressNewsDetails = () => {};
 
   return {
     refreshMap,
     initialRegion,
-    onChangeRadius,
-    radius,
     isLoading,
-    points,
-    location,
     checkpoints,
-    onPressAddNewsButton,
-    handlePressNewsDetails,
   };
 };

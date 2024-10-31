@@ -1,22 +1,23 @@
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { AddCheckpointButton } from "../components/add_checkpoint_button";
 import { StartRouteButton } from "../components/start_route_button";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ContactFormModal } from "../components/contact_form_modal";
 import { useFormNotification } from "../../hooks/useSendNotification";
-import { useRiskAreas } from "../../hooks/useRiskAreas";
+import { useLoadCheckpoints } from "../../hooks/useLoadCheckpoints";
 import { APP_THEME } from "@/common/theme/theme";
 
 import { Text, Button } from "react-native";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { AddButton } from "@/common/components/add_button";
+import { useFocusEffect } from "expo-router";
 
 export const CheckpointScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isActiveRoute, setIsActiveRoute] = useState(false);
   // Ref para saber si se necesita obtener nuevamente los checkpoints
-  const isRefetchNeeded = useRef(false);
+  const isRefetchNeeded = useRef(true);
 
   const {
     handlePressStartRoute,
@@ -28,11 +29,17 @@ export const CheckpointScreen = () => {
     console.log("toggleShowModal");
   };
 
+  const { initialRegion, isLoading, checkpoints, refreshMap } =
+    useLoadCheckpoints();
+
+  console.info("Render");
+
   // Se ejecuta cada vez que se renderiza el componente
-  useLayoutEffect(() => {
+  useFocusEffect(() => {
+    console.log("useFocusEffect");
     if (isRefetchNeeded.current) {
+      refreshMap();
       isRefetchNeeded.current = false;
-      // fetchCheckpoints();
     }
   });
 
@@ -45,17 +52,6 @@ export const CheckpointScreen = () => {
     stopTrackingLocation();
     setIsActiveRoute(false);
   };
-
-  const {
-    initialRegion,
-    isLoading,
-    onChangeRadius,
-    radius,
-    points,
-    checkpoints,
-    onPressAddNewsButton,
-    handlePressNewsDetails,
-  } = useRiskAreas();
 
   if (!initialRegion) {
     return (
@@ -77,9 +73,6 @@ export const CheckpointScreen = () => {
           mapType="standard"
           showsUserLocation
           showsMyLocationButton={true}
-          onRegionChangeComplete={(region) => {
-            onChangeRadius(region);
-          }}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
         >
@@ -107,13 +100,6 @@ export const CheckpointScreen = () => {
             color="#0000ff"
           />
         )}
-        <Text style={mapStyles.radiusText}>
-          Radio:{" "}
-          {radius > 999
-            ? `${(radius / 1000).toFixed(1)} km`
-            : `${radius.toFixed(0)} m`}
-        </Text>
-        <AddButton onPress={onPressAddNewsButton} styles={mapStyles.button} />
       </View>
 
       <StartRouteButton
@@ -123,6 +109,7 @@ export const CheckpointScreen = () => {
       <AddCheckpointButton
         onPressCallback={() => {
           isRefetchNeeded.current = true;
+          console.log("isRefetchNeeded.current", isRefetchNeeded.current);
         }}
       />
 
