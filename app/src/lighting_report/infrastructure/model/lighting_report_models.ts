@@ -1,6 +1,6 @@
 export interface LightingReportModel {
   user: string;
-  date: string;
+  created_at: Date;
   startCoords: {
     latitude: number;
     longitude: number;
