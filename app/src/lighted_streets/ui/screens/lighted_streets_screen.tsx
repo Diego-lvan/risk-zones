@@ -10,6 +10,7 @@ import { APP_THEME } from "@/common/theme/theme";
 import MapView, { Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { darkMapStyle } from "./dark_style";
 import { Fragment } from "react";
+import { AddButton } from "@/common/components/add_button";
 
 export const LightedStreetsScreen = () => {
   const {
@@ -18,6 +19,7 @@ export const LightedStreetsScreen = () => {
     isLoading,
     radius,
     lightedStreetsPoints,
+    onPressAddLightedStreetsButton,
   } = useLightedStreets();
 
   if (!initialRegion) {
@@ -51,17 +53,17 @@ export const LightedStreetsScreen = () => {
             <Polyline
               coordinates={point.points}
               strokeColor="rgba(255, 255, 0, 0.2)" // Color amarillo con baja opacidad para el resplandor exterior
-              strokeWidth={8} // Ancho mayor para el resplandor exterior
+              strokeWidth={15} // Ancho mayor para el resplandor exterior
             />
             <Polyline
               coordinates={point.points}
               strokeColor="rgba(255, 255, 0, 0.5)" // Color amarillo con media opacidad para el resplandor intermedio
-              strokeWidth={6} // Ancho intermedio para el resplandor intermedio
+              strokeWidth={10} // Ancho intermedio para el resplandor intermedio
             />
             <Polyline
               coordinates={point.points}
               strokeColor="yellow" // Color amarillo sólido para la línea principal
-              strokeWidth={2} // Ancho menor para la línea principal
+              strokeWidth={5} // Ancho menor para la línea principal
             />
           </Fragment>
         ))}
@@ -80,6 +82,11 @@ export const LightedStreetsScreen = () => {
           ? `${(radius / 1000).toFixed(1)} km`
           : `${radius.toFixed(0)} m`}
       </Text>
+      <AddButton
+        onPress={onPressAddLightedStreetsButton}
+        styles={styles.button}
+        white={true}
+      />
     </View>
   );
 };
@@ -120,7 +127,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 10,
-    backgroundColor: APP_THEME.colors.primary,
+    backgroundColor: APP_THEME.colors.secondary,
     justifyContent: "center",
     alignItems: "center",
   },

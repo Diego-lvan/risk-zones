@@ -54,18 +54,17 @@ export const useLightedStreets = () => {
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
     const radiusInMeters = (region.latitudeDelta * 98000) / 2;
-    if (
-      Math.abs(radiusInMeters - radius) >= 50 &&
-      location &&
-      getDistance(
+    if (location) {
+      const distance = getDistance(
         location.latitude,
         location.longitude,
         region.latitude,
         region.longitude
-      ) >= 50
-    ) {
-      setRadius(radiusInMeters);
-      setLocation({ latitude: region.latitude, longitude: region.longitude });
+      );
+      if (Math.abs(radiusInMeters - radius) >= 100 || distance >= 100) {
+        setRadius(radiusInMeters);
+        setLocation({ latitude: region.latitude, longitude: region.longitude });
+      }
     }
   };
 
@@ -166,6 +165,11 @@ export const useLightedStreets = () => {
     }
   }, [location, radius]);
 
+  // Función que se realiza al presionar el botón de añadir noticia
+  const onPressAddLightedStreetsButton = () => {
+    //router.push("/add_news");
+  };
+
   return {
     refreshMap,
     initialRegion,
@@ -174,5 +178,6 @@ export const useLightedStreets = () => {
     radius,
     lightedStreetsPoints,
     location,
+    onPressAddLightedStreetsButton,
   };
 };
