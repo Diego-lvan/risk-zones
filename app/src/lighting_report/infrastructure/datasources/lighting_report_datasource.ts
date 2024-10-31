@@ -19,7 +19,7 @@ export class LightingReportDataSourceImpl implements LightingReportDataSource {
         longitude: lighting_report.endCoords.longitude,
       },
       user: lighting_report.userId,
-      date: new Date().toISOString(),
+      created_at: new Date(),
     };
 
     console.log("Datos que se envían al backend:", lighting_reportModel);
