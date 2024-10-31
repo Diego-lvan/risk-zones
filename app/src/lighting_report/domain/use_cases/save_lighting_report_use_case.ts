@@ -17,6 +17,7 @@ export class SaveLightingReportUseCase {
 
   public async execute(lightingReports: LightingReportForm) {
     try {
+      console.log("Datos recibidos en execute:", lightingReports);
       const lightingReportEntity = this.validate(lightingReports);
       await this.lightingReportRepository.saveLightingReport(
         lightingReportEntity
@@ -30,23 +31,28 @@ export class SaveLightingReportUseCase {
   }
 
   private validate(lightingReports: LightingReportForm): LightingReportEntity {
-    const publishedAt = new Date(lightingReports.date);
+    const publishedAt = new Date(lightingReports.created_at);
     if (isNaN(publishedAt.getTime())) {
       throw new Error("Invalid published date");
     }
-    if (!lightingReports.startCoords || !lightingReports.endCoords) {
+    if (
+      !lightingReports.startLatitude ||
+      !lightingReports.startLongitude ||
+      !lightingReports.endLatitude ||
+      !lightingReports.endLongitude
+    ) {
       throw new Error("Invalid coordinates");
     }
 
     return {
-      date: publishedAt,
+      created_at: publishedAt,
       startCoords: {
-        latitude: lightingReports.latitude,
-        longitude: lightingReports.longitude,
+        latitude: lightingReports.startLatitude,
+        longitude: lightingReports.startLongitude,
       },
       endCoords: {
-        latitude: lightingReports.latitude,
-        longitude: lightingReports.longitude,
+        latitude: lightingReports.endLatitude,
+        longitude: lightingReports.endLongitude,
       },
       userId: lightingReports.userId,
     };
