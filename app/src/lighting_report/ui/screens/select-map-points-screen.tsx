@@ -106,14 +106,14 @@ export const SelectMapPointsScreen = () => {
         initialRegion={{
           latitude: tempStartCoords?.latitude || 22.7709,
           longitude: tempStartCoords?.longitude || -102.5832,
-          latitudeDelta: 0.002,
-          longitudeDelta: 0.0,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         }}
       >
         {tempStartCoords && (
           <Marker
             coordinate={tempStartCoords}
-            image={require("@/assets/images/icon_marker.png")}
+            //image={require("@/assets/images/icon_marker.png")}
             onPress={() => handleMarkerPress("start")}
           >
             <Callout>
@@ -125,7 +125,7 @@ export const SelectMapPointsScreen = () => {
           <Marker
             coordinate={tempEndCoords}
             pinColor="black"
-            image={require("@/assets/images/icon_marker.png")}
+            // image={require("@/assets/images/icon_marker.png")}
             onPress={() => handleMarkerPress("end")}
           >
             <Callout>
