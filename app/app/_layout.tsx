@@ -8,8 +8,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { router, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
+import { SelectLocationTwoPointsProvider } from "@/src/common/context//location_two_points_context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,7 +32,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <UserProvider>
         <SelectLocationProvider>
-          <RootLayoutNav />
+          <SelectLocationTwoPointsProvider>
+            <RootLayoutNav />
+          </SelectLocationTwoPointsProvider>
         </SelectLocationProvider>
       </UserProvider>
     </QueryClientProvider>
@@ -108,6 +111,18 @@ function RootLayoutNav() {
         name="see_new_details/[id]"
         options={{
           title: "Detalles de la noticia",
+          headerLeft: (props) => {
+            const { tintColor, canGoBack } = props;
+            return (
+              <BackArrowButton tintColor={tintColor} canGoBack={canGoBack} />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="select_map_points_location"
+        options={{
+          title: "Subir reporte de iluminación",
           headerLeft: (props) => {
             const { tintColor, canGoBack } = props;
             return (
