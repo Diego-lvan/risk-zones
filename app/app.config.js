@@ -8,12 +8,16 @@ export default ({ config }) => {
         googleMaps: {
           apiKey: process.env.EXPO_PUBLIC_MAPS_KEY,
         },
+        mapBox: {
+          apiKey: process.env.EXPO_PUBLIC_MAPSBOX_KEY,
+        },
       },
     },
     ios: {
       ...config.ios,
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_MAPS_KEY,
+        mapBoxApiKey: process.env.EXPO_PUBLIC_MAPSBOX_KEY,
       },
     },
   };
