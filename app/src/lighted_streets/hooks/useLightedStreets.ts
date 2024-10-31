@@ -7,7 +7,7 @@ import { Region } from "react-native-maps";
 import { LightedStreet } from "../domain/entities/lighted_street";
 import axios, { AxiosError } from "axios";
 import { showErrorMessage } from "@/src/common/errors/error_message";
-import { LightedStreetPoints } from "../domain/entities/lighted_street_points";
+import { LightedStreetRouteInfo } from "../domain/entities/lighted_street_route_info";
 import { StreetPointsRepositoryImpl } from "../infraestructure/repositories/street_points_repository";
 import { StreetPointsDatasourceImpl } from "../infraestructure/datasources/street_points_datasource";
 import { router } from "expo-router";
@@ -96,7 +96,7 @@ export const useLightedStreets = () => {
 
   const getPoints = async (
     lightedStreets: LightedStreet[]
-  ): Promise<LightedStreetPoints[]> => {
+  ): Promise<LightedStreetRouteInfo[]> => {
     try {
       const pointsPromises = lightedStreets.map(async (street) => {
         return await streetPointsRepository.getStreetPoints(
@@ -122,7 +122,7 @@ export const useLightedStreets = () => {
         radius
       );
 
-      const newLightedStreetPoints: LightedStreetPoints[] = await getPoints(
+      const newLightedStreetPoints: LightedStreetRouteInfo[] = await getPoints(
         lightedStreets
       );
       setStreetsPoints(newLightedStreetPoints);

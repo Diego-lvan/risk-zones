@@ -1,5 +1,5 @@
 import { CoordEntity } from "@/src/risk_zones_map/domain/entities/coordinate_entity";
-import { LightedStreetPoints } from "../../domain/entities/lighted_street_points";
+import { LightedStreetRouteInfo } from "../../domain/entities/lighted_street_route_info";
 import { StreetPointsRepository } from "../../domain/repositories/street_points_repository";
 import { StreetPointsDatasource } from "../../domain/datasources/street_points_datasource";
 
@@ -9,7 +9,7 @@ export class StreetPointsRepositoryImpl implements StreetPointsRepository {
   async getStreetPoints(
     start: CoordEntity,
     end: CoordEntity
-  ): Promise<LightedStreetPoints> {
+  ): Promise<LightedStreetRouteInfo> {
     return this.streetPointsDatasource.getStreetPoints(start, end);
   }
 }

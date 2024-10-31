@@ -1,9 +1,9 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { LightedStreetPoints } from "../domain/entities/lighted_street_points";
+import { LightedStreetRouteInfo } from "../domain/entities/lighted_street_route_info";
 
 interface LightedStreetsContextType {
-  lightedStreetsPoints: LightedStreetPoints[];
-  setStreetsPoints: (points: LightedStreetPoints[]) => void;
+  lightedStreetsPoints: LightedStreetRouteInfo[];
+  setStreetsPoints: (points: LightedStreetRouteInfo[]) => void;
 }
 
 export const LightedStreetsContext = createContext<LightedStreetsContextType>({
@@ -17,10 +17,10 @@ export const LightedStreetsProvider = ({
   children,
 }: LightedStreetsProviderProps) => {
   const [lightedStreetsPoints, setLightedStreetsPoints] = useState<
-    LightedStreetPoints[]
+    LightedStreetRouteInfo[]
   >([]);
 
-  const setStreetsPoints = (points: LightedStreetPoints[]) => {
+  const setStreetsPoints = (points: LightedStreetRouteInfo[]) => {
     setLightedStreetsPoints(points);
   };
 
