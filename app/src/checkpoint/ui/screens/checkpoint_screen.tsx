@@ -1,7 +1,7 @@
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { AddCheckpointButton } from "../components/add_checkpoint_button";
 import { StartRouteButton } from "../components/start_route_button";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ContactFormModal } from "../components/contact_form_modal";
 import { useFormNotification } from "../../hooks/useSendNotification";
 import { useRiskAreas } from "../../hooks/useRiskAreas";
@@ -15,16 +15,26 @@ import { AddButton } from "@/common/components/add_button";
 export const CheckpointScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isActiveRoute, setIsActiveRoute] = useState(false);
+  // Ref para saber si se necesita obtener nuevamente los checkpoints
+  const isRefetchNeeded = useRef(false);
 
-  const { handlePressStartRoute, handleContactPhoneChange, stopTrackingLocation } = useFormNotification(
-    setIsModalVisible,
-    setIsActiveRoute,
-    isActiveRoute
-  );
+  const {
+    handlePressStartRoute,
+    handleContactPhoneChange,
+    stopTrackingLocation,
+  } = useFormNotification(setIsModalVisible, setIsActiveRoute, isActiveRoute);
   const toggleShowModal = () => {
     setIsModalVisible(!isModalVisible);
     console.log("toggleShowModal");
   };
+
+  // Se ejecuta cada vez que se renderiza el componente
+  useLayoutEffect(() => {
+    if (isRefetchNeeded.current) {
+      isRefetchNeeded.current = false;
+      // fetchCheckpoints();
+    }
+  });
 
   const handleShowModal = () => {
     // lógica cuando la ruta está iniciada
@@ -36,8 +46,16 @@ export const CheckpointScreen = () => {
     setIsActiveRoute(false);
   };
 
-  const { initialRegion, isLoading, onChangeRadius, radius, points, checkpoints, onPressAddNewsButton, handlePressNewsDetails } =
-    useRiskAreas();
+  const {
+    initialRegion,
+    isLoading,
+    onChangeRadius,
+    radius,
+    points,
+    checkpoints,
+    onPressAddNewsButton,
+    handlePressNewsDetails,
+  } = useRiskAreas();
 
   if (!initialRegion) {
     return (
@@ -82,15 +100,31 @@ export const CheckpointScreen = () => {
             </Marker>
           ))}
         </MapView>
-        {isLoading && <ActivityIndicator style={mapStyles.loading} size="large" color="#0000ff" />}
+        {isLoading && (
+          <ActivityIndicator
+            style={mapStyles.loading}
+            size="large"
+            color="#0000ff"
+          />
+        )}
         <Text style={mapStyles.radiusText}>
-          Radio: {radius > 999 ? `${(radius / 1000).toFixed(1)} km` : `${radius.toFixed(0)} m`}
+          Radio:{" "}
+          {radius > 999
+            ? `${(radius / 1000).toFixed(1)} km`
+            : `${radius.toFixed(0)} m`}
         </Text>
         <AddButton onPress={onPressAddNewsButton} styles={mapStyles.button} />
       </View>
 
-      <StartRouteButton handleOnPress={handleShowModal} isActiveRoute={isActiveRoute} />
-      <AddCheckpointButton />
+      <StartRouteButton
+        handleOnPress={handleShowModal}
+        isActiveRoute={isActiveRoute}
+      />
+      <AddCheckpointButton
+        onPressCallback={() => {
+          isRefetchNeeded.current = true;
+        }}
+      />
 
       {/* Mostrar el modal dependiendo de la visibilidad */}
       <ContactFormModal

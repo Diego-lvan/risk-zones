@@ -3,8 +3,17 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { TouchableOpacity, StyleSheet } from "react-native";
 
-export const AddCheckpointButton = () => {
+interface AddCheckpointButtonProps {
+  onPressCallback?: () => void;
+}
+
+export const AddCheckpointButton = ({
+  onPressCallback,
+}: AddCheckpointButtonProps) => {
   const handlePress = () => {
+    if (onPressCallback) {
+      onPressCallback();
+    }
     router.push("/add_checkpoint");
   };
 
