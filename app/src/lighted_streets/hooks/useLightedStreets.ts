@@ -10,6 +10,7 @@ import { showErrorMessage } from "@/src/common/errors/error_message";
 import { LightedStreetPoints } from "../domain/entities/lighted_street_points";
 import { StreetPointsRepositoryImpl } from "../infraestructure/repositories/street_points_repository";
 import { StreetPointsDatasourceImpl } from "../infraestructure/datasources/street_points_datasource";
+import { router } from "expo-router";
 
 const lightedStreetsRepository = new LightedStreetsRepositoryImpl(
   new LightedStreetsDatasourceImpl()
@@ -167,7 +168,7 @@ export const useLightedStreets = () => {
 
   // Función que se realiza al presionar el botón de añadir noticia
   const onPressAddLightedStreetsButton = () => {
-    //router.push("/add_news");
+    router.push("/select_map_points_location");
   };
 
   return {
