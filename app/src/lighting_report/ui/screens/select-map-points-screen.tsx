@@ -2,9 +2,8 @@ import { CoordEntity } from "@/src/risk_zones_map/domain/entities/coordinate_ent
 import { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import MapView, { Callout, MapPressEvent, Marker } from "react-native-maps";
-import { useSelectLocationTwoPoints } from "@/src/common/context/location_context";
+import { useSelectLocationTwoPoints } from "@/src/common/context/location_two_points_context";
 import { APP_THEME } from "@/common/theme/theme";
-import { CustomEndButton } from "@/src/checkpoint/ui/components/custom_end_button";
 import { useUserLocation } from "@/src/common/hooks/useUserLocation";
 import { useSaveLightingReport } from "../../hooks/useSaveLigthingReport";
 import { SaveCoordinatesButton } from "../components/save_coordinates_button";
@@ -43,11 +42,48 @@ export const SelectMapPointsScreen = () => {
   };
 
   const handleSave = () => {
-    if (tempStartCoords && tempEndCoords) {
+    if (!tempStartCoords || !tempEndCoords) {
+      Alert.alert("Error", "Selecciona dos puntos en el mapa");
+      return;
+    }
+
+    setLocation(tempStartCoords, tempEndCoords);
+    console.log("Coordenadas guardadas en contexto:", {
+      tempStartCoords,
+      tempEndCoords,
+    });
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    console.log("Iniciando proceso de guardado...");
+
+    if (!tempStartCoords || !tempEndCoords) {
+      Alert.alert("Error", "Selecciona dos puntos en el mapa");
+      return;
+    }
+
+    try {
+      // Primero guardamos en el contexto
       setLocation(tempStartCoords, tempEndCoords);
-      Alert.alert("Puntos seleccionados correctamente");
-    } else {
-      Alert.alert("Selecciona dos puntos en el mapa");
+
+      console.log("Datos antes de enviar al backend:", {
+        startCoords: tempStartCoords,
+        endCoords: tempEndCoords,
+      });
+
+      const result = await onSubmit();
+
+      console.log("Resultado de onSubmit:", result);
+
+      // Verificamos el estado de la mutación
+      if (mutation.isSuccess) {
+        console.log("Respuesta del backend:", mutation.data);
+        Alert.alert("Éxito", "Los datos se guardaron correctamente");
+      }
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      Alert.alert("Error", "No se pudieron guardar los datos");
     }
   };
 
@@ -56,6 +92,11 @@ export const SelectMapPointsScreen = () => {
       setTempStartCoords(coords);
     });
   }, []);
+
+  useEffect(() => {
+    // Log para debugging
+    console.log("Coordenadas actuales:", { startCoords, endCoords });
+  }, [startCoords, endCoords]);
 
   return (
     <View style={styles.mainContainer}>
@@ -96,11 +137,7 @@ export const SelectMapPointsScreen = () => {
       <Text style={styles.selectLocationText}>
         Selecciona dos puntos en el mapa
       </Text>
-      <SaveCoordinatesButton
-        onPress={() => {
-          onSubmit();
-        }}
-      />
+      <SaveCoordinatesButton onPress={handleSubmit} />
     </View>
   );
 };

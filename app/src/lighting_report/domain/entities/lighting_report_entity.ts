@@ -4,5 +4,5 @@ export interface LightingReportEntity {
   userId: string;
   startCoords: CoordEntity;
   endCoords: CoordEntity;
-  date: Date;
+  created_at: Date;
 }
