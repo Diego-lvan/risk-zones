@@ -7,10 +7,10 @@ import {
 } from "react-native";
 import { useLightedStreets } from "../../hooks/useLightedStreets";
 import { APP_THEME } from "@/common/theme/theme";
-import MapView, { Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { darkMapStyle } from "./dark_style";
-import { Fragment } from "react";
 import { AddButton } from "@/common/components/add_button";
+import { LightedStreet } from "../components/lighted_street_component";
 
 export const LightedStreetsScreen = () => {
   const {
@@ -49,23 +49,7 @@ export const LightedStreetsScreen = () => {
         customMapStyle={darkMapStyle}
       >
         {lightedStreetsPoints.map((point, index) => (
-          <Fragment key={index}>
-            <Polyline
-              coordinates={point.points}
-              strokeColor="rgba(255, 255, 0, 0.2)" // Color amarillo con baja opacidad para el resplandor exterior
-              strokeWidth={15} // Ancho mayor para el resplandor exterior
-            />
-            <Polyline
-              coordinates={point.points}
-              strokeColor="rgba(255, 255, 0, 0.5)" // Color amarillo con media opacidad para el resplandor intermedio
-              strokeWidth={10} // Ancho intermedio para el resplandor intermedio
-            />
-            <Polyline
-              coordinates={point.points}
-              strokeColor="yellow" // Color amarillo sólido para la línea principal
-              strokeWidth={5} // Ancho menor para la línea principal
-            />
-          </Fragment>
+          <LightedStreet key={index} coordinates={point.points} />
         ))}
       </MapView>
 
