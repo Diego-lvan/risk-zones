@@ -26,7 +26,8 @@ export const useLightedStreets = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
   const [radius, setRadius] = useState<number>(200);
-  const { lightedStreetsPoints, setStreetsPoints } = useLightedStreetsContext();
+  const { lightedStreetsPoints, setStreetsPoints, setRegion } =
+    useLightedStreetsContext();
 
   const getDistance = (
     startLatitude: number,
@@ -64,6 +65,7 @@ export const useLightedStreets = () => {
       if (Math.abs(radiusInMeters - radius) >= 100 || distance >= 100) {
         setRadius(radiusInMeters);
         setLocation({ latitude: region.latitude, longitude: region.longitude });
+        setRegion(region);
       }
     }
   };
@@ -77,12 +79,14 @@ export const useLightedStreets = () => {
 
     const location = await Location.getCurrentPositionAsync({});
     setLocation(location.coords);
-    setInitialRegion({
+    const region: Region = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       latitudeDelta: (radius * 2) / 98000,
       longitudeDelta: 0.005,
-    });
+    };
+    setInitialRegion(region);
+    setRegion(region);
   };
 
   // Función que se ejecuta por primera vez que se carga el mapa
@@ -106,7 +110,7 @@ export const useLightedStreets = () => {
       });
       return await Promise.all(pointsPromises);
     } catch (error: any) {
-      console.error(error);
+      console.log(error);
       return [];
     }
   };
