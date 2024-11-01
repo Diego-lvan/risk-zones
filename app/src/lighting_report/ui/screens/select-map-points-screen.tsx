@@ -56,29 +56,35 @@ export const SelectMapPointsScreen = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Iniciando proceso de guardado...");
-
     if (!tempStartCoords || !tempEndCoords) {
       Alert.alert("Error", "Selecciona dos puntos en el mapa");
       return;
     }
 
     try {
-      // Primero guardamos en el contexto
-      setLocation(tempStartCoords, tempEndCoords);
-
-      console.log("Datos antes de enviar al backend:", {
-        startCoords: tempStartCoords,
-        endCoords: tempEndCoords,
+      // Actualizar todos los valores de coordenadas
+      updateValue("startLatitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("startLongitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("endLatitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
+      });
+      updateValue("endLongitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
       });
 
+      // Guardar en el contexto y enviar al backend
+      setLocation(tempStartCoords, tempEndCoords);
       const result = await onSubmit();
 
-      console.log("Resultado de onSubmit:", result);
-
-      // Verificamos el estado de la mutación
       if (mutation.isSuccess) {
-        console.log("Respuesta del backend:", mutation.data);
         Alert.alert("Éxito", "Los datos se guardaron correctamente");
       }
     } catch (error) {
