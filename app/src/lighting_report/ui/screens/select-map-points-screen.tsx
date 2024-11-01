@@ -7,6 +7,7 @@ import { useSaveLightingReport } from "../../hooks/useSaveLigthingReport";
 import { CustomButton } from "../components/save_coordinates_button";
 import { darkMapStyle } from "@/src/lighted_streets/ui/screens/dark_style";
 import { LightedStreet } from "@/src/lighted_streets/ui/components/lighted_street_component";
+import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
 
 export const SelectMapPointsScreen = () => {
   const {
@@ -24,6 +25,10 @@ export const SelectMapPointsScreen = () => {
     getRoute,
     actualRegion,
   } = useSaveLightingReport();
+
+  if (mutation.isPending) {
+    return <FullLoaderScreen />;
+  }
 
   return (
     <View style={styles.mainContainer}>
