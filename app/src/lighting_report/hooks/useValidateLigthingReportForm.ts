@@ -55,8 +55,6 @@ export const useValidatedForm = ({
 
   const { user } = useUser();
   const { startCoords, endCoords } = useSelectLocationTwoPoints();
-  console.log("Start Coords:", startCoords);
-  console.log("End Coords:", endCoords);
   const updateValue = (
     name: LightingReportFormFields,
     value: string | Date | { latitude: number; longitude: number }
@@ -80,8 +78,6 @@ export const useValidatedForm = ({
   };
 
   const onSubmit = async () => {
-    console.log("Start Coords:", startCoords);
-    console.log("End Coords:", endCoords);
     if (startCoords && endCoords) {
       setValue("startLatitude", startCoords.latitude);
       setValue("startLongitude", startCoords.longitude);
@@ -89,7 +85,6 @@ export const useValidatedForm = ({
       setValue("endLongitude", endCoords.longitude);
     }
     updateValue("userId", user?.id || "");
-    console.log(user?.id);
     updateValue("created_at", new Date());
 
     await handleSubmit(

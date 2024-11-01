@@ -12,6 +12,7 @@ import { StreetPointsRepositoryImpl } from "../infraestructure/repositories/stre
 import { StreetPointsDatasourceImpl } from "../infraestructure/datasources/street_points_datasource";
 import { router } from "expo-router";
 import { useLightedStreetsContext } from "../context/lightes_streets_context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const lightedStreetsRepository = new LightedStreetsRepositoryImpl(
   new LightedStreetsDatasourceImpl()
@@ -128,7 +129,19 @@ export const useLightedStreets = () => {
       const newLightedStreetPoints: LightedStreetRouteInfo[] = await getPoints(
         lightedStreets
       );
-      setStreetsPoints(newLightedStreetPoints);
+
+      if (newLightedStreetPoints.length > 0) {
+        await AsyncStorage.setItem(
+          "lightedStreets",
+          JSON.stringify(newLightedStreetPoints)
+        );
+        setStreetsPoints(newLightedStreetPoints);
+      } else {
+        const lightedStreets = await AsyncStorage.getItem("lightedStreets");
+        if (lightedStreets) {
+          setStreetsPoints(JSON.parse(lightedStreets));
+        }
+      }
     }
     setIsLoading(false);
   };

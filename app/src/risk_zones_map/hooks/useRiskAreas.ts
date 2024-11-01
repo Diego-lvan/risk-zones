@@ -7,7 +7,7 @@ import { RiskPoint } from "../domain/entities/risk_point_entity";
 import { Alert } from "react-native";
 import axios, { AxiosError } from "axios";
 import { router } from "expo-router";
-import * as SecureStorage from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RiskAreasRepository = new RiskAreasRepositoryImpl(
   new RiskAreasDatasourceImplProd()
@@ -139,13 +139,10 @@ export const useRiskAreas = () => {
             longitude: riskPoint.coords.longitude,
           };
         });
-        await SecureStorage.setItemAsync(
-          "riskPoints",
-          JSON.stringify(newRiskPoints)
-        );
+        await AsyncStorage.setItem("riskPoints", JSON.stringify(newRiskPoints));
         setPoints(newPoints);
       } else if (riskPoints.length === 0) {
-        const savedPoints = await SecureStorage.getItemAsync("riskPoints");
+        const savedPoints = await AsyncStorage.getItem("riskPoints");
         if (savedPoints) {
           const parsedPoints = JSON.parse(savedPoints) as RiskPoint[];
           setRiskPoints(parsedPoints);
