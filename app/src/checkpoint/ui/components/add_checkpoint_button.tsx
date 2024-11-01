@@ -11,10 +11,10 @@ export const AddCheckpointButton = ({
   onPressCallback,
 }: AddCheckpointButtonProps) => {
   const handlePress = () => {
+    router.push("/add_checkpoint");
     if (onPressCallback) {
       onPressCallback();
     }
-    router.push("/add_checkpoint");
   };
 
   return (
