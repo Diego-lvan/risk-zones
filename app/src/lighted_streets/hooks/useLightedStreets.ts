@@ -109,7 +109,6 @@ export const useLightedStreets = () => {
       console.error(error);
       return [];
     }
-    return [];
   };
 
   // Función usada para refrescar el mapa de calles iluminadas en base al radio
@@ -162,7 +161,6 @@ export const useLightedStreets = () => {
   useEffect(() => {
     if (location) {
       refreshMap(radius);
-      console.log(lightedStreetsPoints);
     }
   }, [location, radius]);
 
