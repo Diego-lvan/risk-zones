@@ -7,10 +7,11 @@ import { Region } from "react-native-maps";
 import { LightedStreet } from "../domain/entities/lighted_street";
 import axios, { AxiosError } from "axios";
 import { showErrorMessage } from "@/src/common/errors/error_message";
-import { LightedStreetPoints } from "../domain/entities/lighted_street_points";
+import { LightedStreetRouteInfo } from "../domain/entities/lighted_street_route_info";
 import { StreetPointsRepositoryImpl } from "../infraestructure/repositories/street_points_repository";
 import { StreetPointsDatasourceImpl } from "../infraestructure/datasources/street_points_datasource";
 import { router } from "expo-router";
+import { useLightedStreetsContext } from "../context/lightes_streets_context";
 
 const lightedStreetsRepository = new LightedStreetsRepositoryImpl(
   new LightedStreetsDatasourceImpl()
@@ -25,9 +26,8 @@ export const useLightedStreets = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>();
   const [radius, setRadius] = useState<number>(200);
-  const [lightedStreetsPoints, setLightedStreetsPoints] = useState<
-    LightedStreetPoints[]
-  >([]);
+  const { lightedStreetsPoints, setStreetsPoints, setRegion } =
+    useLightedStreetsContext();
 
   const getDistance = (
     startLatitude: number,
@@ -65,6 +65,7 @@ export const useLightedStreets = () => {
       if (Math.abs(radiusInMeters - radius) >= 100 || distance >= 100) {
         setRadius(radiusInMeters);
         setLocation({ latitude: region.latitude, longitude: region.longitude });
+        setRegion(region);
       }
     }
   };
@@ -78,12 +79,14 @@ export const useLightedStreets = () => {
 
     const location = await Location.getCurrentPositionAsync({});
     setLocation(location.coords);
-    setInitialRegion({
+    const region: Region = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       latitudeDelta: (radius * 2) / 98000,
       longitudeDelta: 0.005,
-    });
+    };
+    setInitialRegion(region);
+    setRegion(region);
   };
 
   // Función que se ejecuta por primera vez que se carga el mapa
@@ -97,7 +100,7 @@ export const useLightedStreets = () => {
 
   const getPoints = async (
     lightedStreets: LightedStreet[]
-  ): Promise<LightedStreetPoints[]> => {
+  ): Promise<LightedStreetRouteInfo[]> => {
     try {
       const pointsPromises = lightedStreets.map(async (street) => {
         return await streetPointsRepository.getStreetPoints(
@@ -107,10 +110,9 @@ export const useLightedStreets = () => {
       });
       return await Promise.all(pointsPromises);
     } catch (error: any) {
-      console.error(error);
+      console.log(error);
       return [];
     }
-    return [];
   };
 
   // Función usada para refrescar el mapa de calles iluminadas en base al radio
@@ -123,10 +125,10 @@ export const useLightedStreets = () => {
         radius
       );
 
-      const newLightedStreetPoints: LightedStreetPoints[] = await getPoints(
+      const newLightedStreetPoints: LightedStreetRouteInfo[] = await getPoints(
         lightedStreets
       );
-      setLightedStreetsPoints(newLightedStreetPoints);
+      setStreetsPoints(newLightedStreetPoints);
     }
     setIsLoading(false);
   };

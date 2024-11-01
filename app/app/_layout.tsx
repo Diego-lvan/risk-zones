@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import "react-native-reanimated";
 import { SelectLocationTwoPointsProvider } from "@/src/common/context//location_two_points_context";
+import { LightedStreetsProvider } from "@/src/lighted_streets/context/lightes_streets_context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -33,7 +34,9 @@ export default function RootLayout() {
       <UserProvider>
         <SelectLocationProvider>
           <SelectLocationTwoPointsProvider>
-            <RootLayoutNav />
+            <LightedStreetsProvider>
+              <RootLayoutNav />
+            </LightedStreetsProvider>
           </SelectLocationTwoPointsProvider>
         </SelectLocationProvider>
       </UserProvider>
