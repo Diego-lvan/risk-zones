@@ -1,5 +1,3 @@
-import { CoordEntity } from "@/src/risk_zones_map/domain/entities/coordinate_entity";
-import { Fragment, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { APP_THEME } from "@/common/theme/theme";
