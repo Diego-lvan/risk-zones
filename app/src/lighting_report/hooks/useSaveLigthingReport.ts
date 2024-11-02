@@ -32,16 +32,16 @@ export const useSaveLightingReport = () => {
   const onErrorSave = (error: Error) => {
     if (error instanceof ApiError) {
       if (error.statusCode >= 401) {
-        router.push("/save_news_error?known_error=false");
+        router.push("/save_ligthing_report_error?known_error=false");
       } else {
         router.push(
-          `/save_news_error?known_error=true&message=${error.message
+          `/save_ligthing_report_error?known_error=true&message=${error.message
             .split(" ")
             .join("_")}`
         );
       }
     } else {
-      router.push("/save_news_error?known_error=false");
+      router.push("/save_ligthing_report_error?known_error=false");
     }
   };
   const mutation = useMutation({
@@ -133,9 +133,35 @@ export const useSaveLightingReport = () => {
       return;
     }
 
-    setLocation(tempStartCoords, tempEndCoords);
+    try {
+      updateValue("startLatitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("startLongitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("endLatitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
+      });
+      updateValue("endLongitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
+      });
 
-    await onSubmit();
+      setLocation(tempStartCoords, tempEndCoords);
+
+      await onSubmit();
+
+      if (mutation.isSuccess) {
+        Alert.alert("Éxito", "Los datos se guardaron correctamente");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Ocurrió un error al guardar los datos");
+    }
   };
 
   return {

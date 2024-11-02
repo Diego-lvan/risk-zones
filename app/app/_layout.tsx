@@ -123,6 +123,10 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
+        name="lighting_report_saved"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
+      <Stack.Screen
         name="select_map_points_location"
         options={{
           title: "Subir reporte de iluminación",

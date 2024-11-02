@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Image } from "react-native";
 import { APP_THEME } from "@/common/theme/theme";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -32,7 +32,10 @@ export default function TabLayout() {
         options={{
           title: "Iluminación",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="map-marker" color={color} />
+            <Image
+              source={require("@/assets/images/icon-container.png")}
+              style={{ width: 30, height: 35, tintColor: color }}
+            />
           ),
         }}
       />
