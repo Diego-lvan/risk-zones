@@ -67,22 +67,30 @@ export const useValidatedForm = ({
       if (name.includes("start")) {
         setValue("startLatitude", value.latitude);
         setValue("startLongitude", value.longitude);
+        trigger("startLatitude");
+        trigger("startLongitude");
       } else if (name.includes("end")) {
         setValue("endLatitude", value.latitude);
         setValue("endLongitude", value.longitude);
+        trigger("endLatitude");
+        trigger("endLongitude");
       }
     } else {
       setValue(name, value);
+      trigger(name);
     }
-    trigger(name);
   };
 
   const onSubmit = async () => {
     if (startCoords && endCoords) {
-      setValue("startLatitude", startCoords.latitude);
-      setValue("startLongitude", startCoords.longitude);
-      setValue("endLatitude", endCoords.latitude);
-      setValue("endLongitude", endCoords.longitude);
+      updateValue("startLatitude", {
+        latitude: startCoords.latitude,
+        longitude: startCoords.longitude,
+      });
+      updateValue("endLatitude", {
+        latitude: endCoords.latitude,
+        longitude: endCoords.longitude,
+      });
     }
     updateValue("userId", user?.id || "");
     updateValue("created_at", new Date());
