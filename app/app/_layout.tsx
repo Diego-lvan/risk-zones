@@ -123,7 +123,7 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
-        name="ligthing_report_saved"
+        name="lighting_report_saved"
         options={{ headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen

@@ -22,7 +22,9 @@ export const SaveLigthingReportConfirmation = ({
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>Reporte subido correctamente</Text>
+          <Text style={styles.title}>
+            {message || "Reporte subido correctamente"}
+          </Text>
           <CustomEndButton onPress={handlePress} message="Aceptar" />
         </View>
       </View>
