@@ -1,7 +1,7 @@
 import SaveLigthingReportConfirmation from "@/src/lighting_report/ui/screens/error_saving_ligthingreport_screen";
 import SaveNewsConfirmation from "@/src/news/ui/screens/error_saving_news_screen";
 import { useState } from "react";
-export default function LightingReportSaved() {
+export default function NewsSaved() {
   const [isModalVisible, setModalVisible] = useState(true);
 
   const handleClose = () => {
@@ -11,7 +11,6 @@ export default function LightingReportSaved() {
     <SaveLigthingReportConfirmation
       isVisible={isModalVisible}
       onClose={handleClose}
-      message="Reporte subido correctamente"
     />
   );
 }

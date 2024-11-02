@@ -32,16 +32,16 @@ export const useSaveLightingReport = () => {
   const onErrorSave = (error: Error) => {
     if (error instanceof ApiError) {
       if (error.statusCode >= 401) {
-        router.push("/save_news_error?known_error=false");
+        router.push("/save_ligthing_report_error?known_error=false");
       } else {
         router.push(
-          `/save_news_error?known_error=true&message=${error.message
+          `/save_ligthing_report_error?known_error=true&message=${error.message
             .split(" ")
             .join("_")}`
         );
       }
     } else {
-      router.push("/save_news_error?known_error=false");
+      router.push("/save_ligthing_report_error?known_error=false");
     }
   };
   const mutation = useMutation({
