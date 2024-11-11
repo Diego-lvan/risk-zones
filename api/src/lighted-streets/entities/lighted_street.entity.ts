@@ -1,5 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, Point, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Point, PrimaryGeneratedColumn } from 'typeorm';
+import { LightingRating } from './lighting_rating.entity';
 
 @Entity('lighted_street')
 export class LightedStreet {
@@ -17,4 +18,7 @@ export class LightedStreet {
 
   @Column({ nullable: false, default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToMany(() => LightingRating, (LightingRating) => LightingRating.street)
+  lightingRatings: LightingRating[];
 }
