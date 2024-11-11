@@ -6,4 +6,5 @@ export class LightedStreetDTO {
   endCoords: Coordinate;
   user?: string;
   createdAt: Date;
+  rating: number;
 }
