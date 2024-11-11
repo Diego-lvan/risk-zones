@@ -1,5 +1,3 @@
-import { CoordEntity } from "@/src/risk_zones_map/domain/entities/coordinate_entity";
-import { Fragment, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { APP_THEME } from "@/common/theme/theme";
@@ -7,6 +5,7 @@ import { useSaveLightingReport } from "../../hooks/useSaveLigthingReport";
 import { CustomButton } from "../components/save_coordinates_button";
 import { darkMapStyle } from "@/src/lighted_streets/ui/screens/dark_style";
 import { LightedStreet } from "@/src/lighted_streets/ui/components/lighted_street_component";
+import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
 
 export const SelectMapPointsScreen = () => {
   const {
@@ -24,6 +23,10 @@ export const SelectMapPointsScreen = () => {
     getRoute,
     actualRegion,
   } = useSaveLightingReport();
+
+  if (mutation.isPending) {
+    return <FullLoaderScreen />;
+  }
 
   return (
     <View style={styles.mainContainer}>

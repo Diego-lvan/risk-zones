@@ -32,16 +32,16 @@ export const useSaveLightingReport = () => {
   const onErrorSave = (error: Error) => {
     if (error instanceof ApiError) {
       if (error.statusCode >= 401) {
-        router.push("/save_news_error?known_error=false");
+        router.push("/save_ligthing_report_error?known_error=false");
       } else {
         router.push(
-          `/save_news_error?known_error=true&message=${error.message
+          `/save_ligthing_report_error?known_error=true&message=${error.message
             .split(" ")
             .join("_")}`
         );
       }
     } else {
-      router.push("/save_news_error?known_error=false");
+      router.push("/save_ligthing_report_error?known_error=false");
     }
   };
   const mutation = useMutation({
@@ -128,41 +128,41 @@ export const useSaveLightingReport = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Iniciando proceso de guardado...");
-
     if (!tempStartCoords || !tempEndCoords) {
       Alert.alert("Error", "Selecciona dos puntos en el mapa");
       return;
     }
 
     try {
-      // Primero guardamos en el contexto
-      setLocation(tempStartCoords, tempEndCoords);
-
-      console.log("Datos antes de enviar al backend:", {
-        startCoords: tempStartCoords,
-        endCoords: tempEndCoords,
+      updateValue("startLatitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("startLongitude", {
+        latitude: tempStartCoords.latitude,
+        longitude: tempStartCoords.longitude,
+      });
+      updateValue("endLatitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
+      });
+      updateValue("endLongitude", {
+        latitude: tempEndCoords.latitude,
+        longitude: tempEndCoords.longitude,
       });
 
-      const result = await onSubmit();
+      setLocation(tempStartCoords, tempEndCoords);
 
-      console.log("Resultado de onSubmit:", result);
+      await onSubmit();
 
-      // Verificamos el estado de la mutación
       if (mutation.isSuccess) {
-        console.log("Respuesta del backend:", mutation.data);
         Alert.alert("Éxito", "Los datos se guardaron correctamente");
       }
     } catch (error) {
-      console.error("Error al guardar:", error);
-      Alert.alert("Error", "No se pudieron guardar los datos");
+      console.error(error);
+      Alert.alert("Error", "Ocurrió un error al guardar los datos");
     }
   };
-
-  useEffect(() => {
-    // Log para debugging
-    console.log("Coordenadas actuales:", { startCoords, endCoords });
-  }, [startCoords, endCoords]);
 
   return {
     updateValue,
