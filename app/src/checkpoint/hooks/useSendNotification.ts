@@ -9,11 +9,14 @@ import { NotificationEntity } from "../domain/entities/notification_entity";
 import { CheckpointDataSourceImpl } from "../infrastructure/datasources/checkpoint_datasource";
 import { CheckpointEntity } from "../domain/entities/checkpoint_entity";
 import { Checkpoint } from "../domain/entities/checkpoint";
+import { set } from "react-hook-form";
 
-interface UseFormNotificationProps {
+interface UseSendNotificationProps {
   setIsModalVisible: (visible: boolean) => void;
   setIsActiveRoute: (active: boolean) => void;
   isActiveRoute: boolean;
+  checkpoints: CheckpointEntity[];
+  setCheckpoints: React.Dispatch<React.SetStateAction<CheckpointEntity[]>>;
 }
 
 Notifications.setNotificationHandler({
@@ -42,15 +45,16 @@ export interface CheckpointRes {
   };
 }
 
-export const useFormNotification = (
-  setIsModalVisible: UseFormNotificationProps["setIsModalVisible"],
-  setIsActiveRoute: UseFormNotificationProps["setIsActiveRoute"],
-  isActiveRoute: UseFormNotificationProps["isActiveRoute"]
+export const useSendNotification = (
+  setIsModalVisible: UseSendNotificationProps["setIsModalVisible"],
+  setIsActiveRoute: UseSendNotificationProps["setIsActiveRoute"],
+  isActiveRoute: UseSendNotificationProps["isActiveRoute"],
+  setCheckpoints: UseSendNotificationProps["setCheckpoints"],
+  checkpoints: CheckpointEntity[]
 ): UseFormNotificationReturn => {
   const [contactPhone, setContactPhone] = useState<string>("");
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [locationSubscription, setLocationSubscription] = useState<Location.LocationSubscription | null>(null);
-  const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
 
   const notificationDataSourceImpl = new NotificationDataSourceImpl();
   const checkpointDataSourceImpl = new CheckpointDataSourceImpl();

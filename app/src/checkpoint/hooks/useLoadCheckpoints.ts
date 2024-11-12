@@ -13,9 +13,7 @@ import { CheckpointDataSourceImpl } from "../infrastructure/datasources/checkpoi
 import { CheckpointEntity } from "../domain/entities/checkpoint_entity";
 import { useUser } from "@/src/user/context/user_context";
 
-const CheckpointRepository = new CheckpointRepositoryImpl(
-  new CheckpointDataSourceImpl()
-);
+const CheckpointRepository = new CheckpointRepositoryImpl(new CheckpointDataSourceImpl());
 // Interface usada en el mapa de calor
 export interface LatLngName {
   latitude: number;
@@ -54,9 +52,7 @@ export const useLoadCheckpoints = () => {
     initializeMap();
   }, []);
 
-  const getCheckpoints = async (
-    userId: string
-  ): Promise<CheckpointEntity[]> => {
+  const getCheckpoints = async (userId: string): Promise<CheckpointEntity[]> => {
     try {
       return await CheckpointRepository.fetchCheckpoints(userId);
     } catch (error) {
@@ -114,5 +110,6 @@ export const useLoadCheckpoints = () => {
     initialRegion,
     isLoading,
     checkpoints,
+    setCheckpoints,
   };
 };
