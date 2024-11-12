@@ -4,4 +4,5 @@ export interface CheckpointEntity {
   name: string;
   coords: CoordEntity;
   userId: string;
+  id: number;
 }
