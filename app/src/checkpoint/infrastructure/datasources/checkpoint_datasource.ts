@@ -36,11 +36,11 @@ export class CheckpointDataSourceImpl implements CheckpointDataSource {
     }
   }
 
-  async fetchCheckpoints(userId: string): Promise<Checkpoint[]> {
+  async fetchCheckpoints(userId: string): Promise<CheckpointEntity[]> {
     console.log("fetchCheckpoints");
     try {
       const { data } = await axios.get<CheckpointRes[]>(`${API_URL}/checkpoint/user/${userId}`);
-      const checkpoints: Checkpoint[] = data.map((checkpoint: CheckpointRes) => {
+      const checkpoints: CheckpointEntity[] = data.map((checkpoint: CheckpointRes) => {
         return {
           id: checkpoint.id,
           name: checkpoint.name,
@@ -52,6 +52,19 @@ export class CheckpointDataSourceImpl implements CheckpointDataSource {
         };
       });
       return checkpoints;
+    } catch (error) {
+      const apiError = error as AxiosError;
+      const message = apiError.response ? (apiError.response.data as { message: string }).message : "Error desconocido";
+      throw new ApiError(message, apiError.response?.status || 500);
+    }
+  }
+
+  async deleteCheckpoint(id: number): Promise<void> {
+    try {
+      const { status } = await axios.delete(`${API_URL}/checkpoint/${id}`);
+      if (status !== 200) {
+        throw new Error();
+      }
     } catch (error) {
       const apiError = error as AxiosError;
       const message = apiError.response ? (apiError.response.data as { message: string }).message : "Error desconocido";

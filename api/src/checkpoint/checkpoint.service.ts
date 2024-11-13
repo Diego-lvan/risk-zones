@@ -116,4 +116,10 @@ export class CheckpointService {
       throw new NotificationNotSent();
     }
   }
+
+  async deleteCheckpoint(id: number): Promise<void> {
+    const checkpoint = await this.checkpointRepository.findOneBy({ id });
+    if (!checkpoint) throw new CheckPointNotFound();
+    await this.checkpointRepository.remove(checkpoint);
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, HttpException, Delete } from '@nestjs/common';
 import { CheckpointService } from './checkpoint.service';
 import { CreateCheckpointDto } from './dto/create-checkpoint.dto';
 import { ApiBody, ApiParam, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -68,5 +68,23 @@ export class CheckpointController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Internal server error' })
   findAll(@Param('id') id: string) {
     return this.checkpointService.findAllByUser(id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a checkpoint' })
+  @ApiParam({ name: 'id', description: 'Checkpoint ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Checkpoint deleted successfully' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Checkpoint not found' })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, description: 'Internal server error' })
+  async deleteCheckpoint(@Param('id') id: number) {
+    try {
+      await this.checkpointService.deleteCheckpoint(id);
+      return { message: 'Checkpoint deleted successfully' };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
