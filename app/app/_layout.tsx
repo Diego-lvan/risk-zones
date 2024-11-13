@@ -123,6 +123,18 @@ function RootLayoutNav() {
         }}
       />
       <Stack.Screen
+        name="rate_street/[id]"
+        options={{
+          title: "Calificar iluminación",
+          headerLeft: (props) => {
+            const { tintColor, canGoBack } = props;
+            return (
+              <BackArrowButton tintColor={tintColor} canGoBack={canGoBack} />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
         name="lighting_report_saved"
         options={{ headerShown: false }}
       ></Stack.Screen>
