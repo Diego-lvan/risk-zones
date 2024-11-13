@@ -11,6 +11,10 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { darkMapStyle } from "./dark_style";
 import { AddButton } from "@/common/components/add_button";
 import { LightedStreet } from "../components/lighted_street_component";
+import { router } from "expo-router";
+import { useUser } from "@/src/user/context/user_context";
+import { showErrorMessage } from "@/src/common/errors/error_message";
+import * as SecureStorage from "expo-secure-store";
 
 export const LightedStreetsScreen = () => {
   const {
@@ -21,6 +25,35 @@ export const LightedStreetsScreen = () => {
     lightedStreetsPoints,
     onPressAddLightedStreetsButton,
   } = useLightedStreets();
+  const { user } = useUser();
+
+  const onPressRateButton = (streetId: string) => {
+    if (!user) {
+      showErrorMessage("Usuario no encontrado");
+      return;
+    }
+    const checkRating = async () => {
+      const isRated = await checkUserRating(streetId, user.id);
+      if (isRated) {
+        showErrorMessage("Ya has calificado esta calle");
+        return;
+      }
+      router.push(`/rate_street/${streetId}`);
+    };
+    checkRating();
+  };
+
+  const checkUserRating = async (
+    streetId: string,
+    userId: string
+  ): Promise<boolean> => {
+    const userRating = await SecureStorage.getItemAsync(streetId);
+    if (userRating) {
+      const isRated = userRating.includes(userId);
+      return isRated ? true : false;
+    }
+    return false;
+  };
 
   if (!initialRegion) {
     return (
@@ -49,7 +82,12 @@ export const LightedStreetsScreen = () => {
         customMapStyle={darkMapStyle}
       >
         {lightedStreetsPoints.map((point, index) => (
-          <LightedStreet key={index} coordinates={point.points} />
+          <LightedStreet
+            key={index}
+            coordinates={point.points}
+            rating={point.rating || 2}
+            onPress={() => onPressRateButton(point.streetId || "")}
+          />
         ))}
       </MapView>
 
