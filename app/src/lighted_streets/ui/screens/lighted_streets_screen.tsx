@@ -87,6 +87,7 @@ export const LightedStreetsScreen = () => {
             coordinates={point.points}
             rating={point.rating || 2}
             onPress={() => onPressRateButton(point.streetId || "")}
+            showRateButton={true}
           />
         ))}
       </MapView>
