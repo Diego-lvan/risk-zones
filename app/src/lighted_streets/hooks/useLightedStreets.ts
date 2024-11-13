@@ -22,6 +22,9 @@ const streetPointsRepository = new StreetPointsRepositoryImpl(
   new StreetPointsDatasourceImpl()
 );
 
+/**
+ * Custom hook to manage lighted streets data and user location.
+ */
 export const useLightedStreets = () => {
   const [location, setLocation] = useState<LatLng | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,6 +33,14 @@ export const useLightedStreets = () => {
   const { lightedStreetsPoints, setStreetsPoints, setRegion } =
     useLightedStreetsContext();
 
+  /**
+   * Calculate the distance between two geographical points using the Haversine formula.
+   * @param startLatitude - Latitude of the starting point.
+   * @param startLongitude - Longitude of the starting point.
+   * @param endLatitude - Latitude of the ending point.
+   * @param endLongitude - Longitude of the ending point.
+   * @returns The distance in meters.
+   */
   const getDistance = (
     startLatitude: number,
     startLongitude: number,
@@ -52,7 +63,10 @@ export const useLightedStreets = () => {
     return d * 1000;
   };
 
-  // Función que detecta cuando el usuario mueve el mapa y calcula el radio en base a la pantalla
+  /**
+   * Detects when the user moves the map and calculates the radius based on the screen.
+   * @param region - The new region of the map.
+   */
   const onChangeRadius = (region: Region) => {
     if (isLoading) return;
     const radiusInMeters = (region.latitudeDelta * 98000) / 2;
@@ -71,7 +85,9 @@ export const useLightedStreets = () => {
     }
   };
 
-  // Función que obtiene la uicación actual del usuario
+  /**
+   * Gets the current location of the user.
+   */
   const getActualLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -90,8 +106,9 @@ export const useLightedStreets = () => {
     setRegion(region);
   };
 
-  // Función que se ejecuta por primera vez que se carga el mapa
-  // Obtiene la ubicación actual del usuario
+  /**
+   * Initializes the map by getting the user's current location.
+   */
   useEffect(() => {
     const initializeMap = async () => {
       await getActualLocation();
@@ -99,15 +116,23 @@ export const useLightedStreets = () => {
     initializeMap();
   }, []);
 
+  /**
+   * Retrieves points for the given lighted streets.
+   * @param lightedStreets - Array of lighted streets.
+   * @returns A promise that resolves to an array of LightedStreetRouteInfo.
+   */
   const getPoints = async (
     lightedStreets: LightedStreet[]
   ): Promise<LightedStreetRouteInfo[]> => {
     try {
       const pointsPromises = lightedStreets.map(async (street) => {
-        return await streetPointsRepository.getStreetPoints(
+        const point = await streetPointsRepository.getStreetPoints(
           street.startCoords,
           street.endCoords
         );
+        point.rating = street.rating;
+        point.streetId = street.id;
+        return point;
       });
       return await Promise.all(pointsPromises);
     } catch (error: any) {
@@ -116,7 +141,10 @@ export const useLightedStreets = () => {
     }
   };
 
-  // Función usada para refrescar el mapa de calles iluminadas en base al radio
+  /**
+   * Refreshes the map of lighted streets based on the given radius.
+   * @param radius - The radius to search for lighted streets.
+   */
   const refreshMap = async (radius: number) => {
     setIsLoading(true);
     if (location) {
@@ -146,7 +174,13 @@ export const useLightedStreets = () => {
     setIsLoading(false);
   };
 
-  // Función que obtiene la lista de calles iluminadas
+  /**
+   * Retrieves the list of lighted streets within a given radius.
+   * @param latitude - Latitude of the center point.
+   * @param longitude - Longitude of the center point.
+   * @param radius - The radius to search for lighted streets.
+   * @returns A promise that resolves to an array of LightedStreet.
+   */
   const getLightedStreets = async (
     latitude: number,
     longitude: number,
@@ -173,15 +207,18 @@ export const useLightedStreets = () => {
     return [];
   };
 
-  // Función que se ejecuta cuando cambia la ubicación en el mapa
-  // Refresca el mapa de zonas inseguras alrededor de la ubicación
+  /**
+   * Refreshes the map when the location or radius changes.
+   */
   useEffect(() => {
     if (location) {
       refreshMap(radius);
     }
   }, [location, radius]);
 
-  // Función que se realiza al presionar el botón de añadir noticia
+  /**
+   * Handles the action when the add lighted streets button is pressed.
+   */
   const onPressAddLightedStreetsButton = () => {
     router.push("/select_map_points_location");
   };
