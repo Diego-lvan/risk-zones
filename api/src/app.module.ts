@@ -14,6 +14,7 @@ import { NewsModule } from './news/news.module';
 import { LightedStreet } from './lighted-streets/entities/lighted_street.entity';
 import { LightedStreetModule } from './lighted-streets/lighted-streets.module';
 import { LightingRating } from './lighted-streets/entities/lighting_rating.entity';
+import { Reactions } from './news/entities/reactions.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { LightingRating } from './lighted-streets/entities/lighting_rating.entit
       username: DbConstants.DB_USER,
       password: DbConstants.DB_PASSWORD,
       database: DbConstants.DB_NAME,
-      entities: [User, News, Checkpoint, LightedStreet, LightingRating],
+      entities: [User, News, Checkpoint, LightedStreet, LightingRating, Reactions],
       synchronize: true,
       logging: false,
     }),

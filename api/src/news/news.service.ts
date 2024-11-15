@@ -87,12 +87,12 @@ export class NewsService {
    * @param reactionType The type of reaction ('like' or 'dislike')
    * @returns The updated news with the new reaction count
    */
-  async addReaction(newId: number, userId: number, reactionType: 'like' | 'dislike') {
+  async addReaction(newId: number, userId: string, reactionType: 'like' | 'dislike') {
     const news = await this.newsRepository.findOneBy({ id: newId });
     if (!news) {
       throw new NewNotFoundError();
     }
-    const user = await this.userService.findOne(userId.toString());
+    const user = await this.userService.findOne(userId);
     if (!user) {
       throw new Error('User not found');
     }
@@ -104,7 +104,27 @@ export class NewsService {
     }
     reaction.reactionType = reactionType;
     await this.saveOrUpdateReaction(reaction);
-    return news;
+    // Contar el número de likes para la noticia
+    const likeCount = await this.reactionRepository.count({
+      where: {
+        news: { id: newId },
+        reactionType: 'like',
+      },
+    });
+    //Contar el número de dislikes para la noticia
+    const dislikeCount = await this.reactionRepository.count({
+      where: {
+        news: { id: newId },
+        reactionType: 'dislike',
+      },
+    });
+
+    // Retornar solo el id de la noticia y el conteo de likes
+    return {
+      newsId: news.id,
+      likes: likeCount,
+      dislikes: dislikeCount,
+    };
   }
 
   /**
@@ -113,11 +133,11 @@ export class NewsService {
    * @param userId The id of the user
    * @returns The reaction entity or null if not found
    */
-  async findReaction(newsId: number, userId: number): Promise<Reactions | null> {
+  async findReaction(newsId: number, userId: string): Promise<Reactions | null> {
     return this.reactionRepository.findOne({
       where: {
         news: { id: newsId },
-        user: { id: userId.toString() },
+        user: { id: userId },
       },
     });
   }

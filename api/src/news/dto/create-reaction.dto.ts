@@ -1,14 +1,18 @@
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ReactionDto {
+  @ApiProperty({ description: 'ID de noticia' })
   @IsNumber()
   @IsNotEmpty()
   newsId: number;
 
-  @IsNumber()
+  @ApiProperty({ description: 'User id del que dara una reaccion' })
+  @IsString()
   @IsNotEmpty()
-  userId: number;
+  userId: string;
 
+  @ApiProperty({ description: 'Tipo de reacción' })
   @IsEnum(['like', 'dislike'])
   @IsNotEmpty()
   reactionType: 'like' | 'dislike';
