@@ -61,11 +61,11 @@ export const SelectMapPointsScreen = () => {
         )}
 
         {lightedStreetsPoints.map((point, index) => (
-          <LightedStreet key={index} coordinates={point.points} />
+          <LightedStreet key={index} coordinates={point.points} rating={point.rating || 2}/>
         ))}
 
         {previewRoute && (
-          <LightedStreet key="prevRoute" coordinates={previewRoute.points} />
+          <LightedStreet key="prevRoute" coordinates={previewRoute.points} rating={2}/>
         )}
       </MapView>
       <Text style={styles.selectLocationText}>

@@ -4,6 +4,7 @@ import { CreateNewsDto } from './dto/create-news.dto';
 import { News } from './entities/news.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { NewNotFoundError } from './errors/new_not_found';
+import { ReactionDto } from './dto/create-reaction.dto';
 
 /**
  * Controller for handling news-related operations.
@@ -47,5 +48,16 @@ export class NewsController {
   @Get()
   async findAll() {
     return this.newsService.findAll();
+  }
+  /**
+   * Updates a like or dislike reaction to a news article.
+   * @param newId The id of the news to react to.
+   * @param reactionDto The DTO containing the userId and reactionType.
+   * @returns The updated news with the new reaction count.
+   */
+  @Post(':id/reactions')
+  async updateLikeOrDislike(@Param('id') newId: string, @Body() reactionDto: ReactionDto) {
+    const { userId, reactionType } = reactionDto;
+    return this.newsService.addReaction(+newId, userId, reactionType);
   }
 }

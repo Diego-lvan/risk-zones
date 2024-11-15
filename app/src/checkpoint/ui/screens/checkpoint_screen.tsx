@@ -1,17 +1,22 @@
-import { View, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { AddCheckpointButton } from "../components/add_checkpoint_button";
 import { StartRouteButton } from "../components/start_route_button";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ContactFormModal } from "../components/contact_form_modal";
-import { useFormNotification } from "../../hooks/useSendNotification";
+import { useSendNotification } from "../../hooks/useSendNotification";
 import { useLoadCheckpoints } from "../../hooks/useLoadCheckpoints";
 import { APP_THEME } from "@/common/theme/theme";
-
-import { Text, Button } from "react-native";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { AddButton } from "@/common/components/add_button";
 import { useFocusEffect } from "expo-router";
+import { useDeleteCheckpoint } from "../../hooks/useDeleteCheckpoint";
 import { useHandleContacts } from "../../hooks/useHandleContacts";
 import { AddContactButton } from "../components/add_contact_button";
 
@@ -23,22 +28,28 @@ export const CheckpointScreen = () => {
   // Ref para saber si se necesita obtener nuevamente los checkpoints
   const isRefetchNeeded = useRef(true);
 
-  const {
-    handlePressStartRoute,
-    handleContactPhoneChange,
-    stopTrackingLocation,
-  } = useFormNotification(setIsModalVisible, setIsActiveRoute, isActiveRoute);
   const toggleShowModal = () => {
     setIsModalVisible(!isModalVisible);
     console.log("toggleShowModal");
   };
 
-  const { initialRegion, isLoading, checkpoints, refreshMap } =
+  const { initialRegion, isLoading, checkpoints, refreshMap, setCheckpoints } =
     useLoadCheckpoints();
+  const {
+    handlePressStartRoute,
+    handleContactPhoneChange,
+    stopTrackingLocation,
+  } = useSendNotification(
+    setIsModalVisible,
+    setIsActiveRoute,
+    isActiveRoute,
+    setCheckpoints,
+    checkpoints
+  );
+  const { deleteCheckpoint } = useDeleteCheckpoint({ refreshMap });
 
   console.info("Render");
 
-  // Se ejecuta cada vez que se renderiza el componente
   useFocusEffect(() => {
     console.log("useFocusEffect");
     if (isRefetchNeeded.current) {
@@ -48,7 +59,6 @@ export const CheckpointScreen = () => {
   });
 
   const handleShowModal = () => {
-    // lógica cuando la ruta está iniciada
     if (!isActiveRoute) {
       setIsModalVisible(true);
       return;
@@ -87,11 +97,16 @@ export const CheckpointScreen = () => {
                 latitude: point.coords.latitude,
                 longitude: point.coords.longitude,
               }}
-              anchor={{ x: 0.5, y: 1 }} // Ajusta el ancla para que la punta del marcador coincida con la ubicación
+              anchor={{ x: 0.5, y: 1 }}
             >
-              <Callout>
-                <View>
-                  <Text>{point.name}</Text>
+              <Callout onPress={() => deleteCheckpoint(point.id)}>
+                <View style={styles.marker}>
+                  <Text numberOfLines={2} style={styles.markerText}>
+                    {point.name}
+                  </Text>
+                  <View style={styles.deleteDetailsButton}>
+                    <Text style={styles.deleteBtn}>Eliminar</Text>
+                  </View>
                 </View>
               </Callout>
             </Marker>
@@ -119,7 +134,6 @@ export const CheckpointScreen = () => {
 
       <AddContactButton onPressCallback={openContactPicker} />
 
-      {/* Mostrar el modal dependiendo de la visibilidad */}
       <ContactFormModal
         toggleShowModal={toggleShowModal}
         handleContactPhoneChange={handleContactPhoneChange}
@@ -139,6 +153,46 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
+
+  deleteBtn: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  deleteDetailsButton: {
+    height: 30,
+    width: 100,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+
+  markerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  marker: {
+    height: 130,
+    width: 150,
+    borderRadius: 10,
+    padding: 20,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  deleteButton: {
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: "red",
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  deleteButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
 });
 
 const mapStyles = StyleSheet.create({
@@ -154,31 +208,10 @@ const mapStyles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -25 }, { translateY: -25 }],
   },
-  radiusText: {
-    position: "absolute",
-    bottom: 50 + 20 + 10,
-    right: 20,
-    color: "white",
-    fontSize: 16,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 10,
-    borderRadius: 5,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "black",
-  },
-  button: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    height: 50,
-    width: 50,
-    borderRadius: 10,
-    backgroundColor: APP_THEME.colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
