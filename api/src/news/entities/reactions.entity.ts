@@ -1,12 +1,13 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { News } from './news.entity';
 
+@Entity('reaction')
 export class Reactions {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column({ type: 'enum', enum: ['like', 'dislike'], nullable: false })
   reactionType: string;
 
   @ManyToOne(() => User, (user) => user.reactionsList, { nullable: true })

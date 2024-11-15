@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { NewNotFoundError } from './errors/new_not_found';
 import { PublicNewResponse } from './dto/public-new-response';
+import { Reactions } from './entities/reactions.entity';
 
 @Injectable()
 export class NewsService {
@@ -13,6 +14,8 @@ export class NewsService {
     @InjectRepository(News)
     private readonly newsRepository: Repository<News>,
     private readonly userService: UserService,
+    @InjectRepository(Reactions)
+    private readonly reactionRepository: Repository<Reactions>,
   ) {}
 
   async createNews(createNewsDto: CreateNewsDto): Promise<News> {
@@ -75,6 +78,57 @@ export class NewsService {
     } catch (error) {
       throw new NewNotFoundError();
     }
+  }
+
+  /**
+   * Method to add a reaction (like or dislike) to a news
+   * @param newId The id of the news to react to
+   * @param userId The id of the user who reacts to the news
+   * @param reactionType The type of reaction ('like' or 'dislike')
+   * @returns The updated news with the new reaction count
+   */
+  async addReaction(newId: number, userId: number, reactionType: 'like' | 'dislike') {
+    const news = await this.newsRepository.findOneBy({ id: newId });
+    if (!news) {
+      throw new NewNotFoundError();
+    }
+    const user = await this.userService.findOne(userId.toString());
+    if (!user) {
+      throw new Error('User not found');
+    }
+    let reaction = await this.findReaction(newId, userId);
+    if (!reaction) {
+      reaction = new Reactions();
+      reaction.news = news;
+      reaction.user = user;
+    }
+    reaction.reactionType = reactionType;
+    await this.saveOrUpdateReaction(reaction);
+    return news;
+  }
+
+  /**
+   * Method to find a reaction by newsId and userId
+   * @param newsId The id of the news
+   * @param userId The id of the user
+   * @returns The reaction entity or null if not found
+   */
+  async findReaction(newsId: number, userId: number): Promise<Reactions | null> {
+    return this.reactionRepository.findOne({
+      where: {
+        news: { id: newsId },
+        user: { id: userId.toString() },
+      },
+    });
+  }
+
+  /**
+   * Method to save or update a reaction
+   * @param reaction The reaction entity to save or update
+   * @returns The saved or updated reaction entity
+   */
+  async saveOrUpdateReaction(reaction: Reactions): Promise<Reactions> {
+    return this.reactionRepository.save(reaction);
   }
 }
 
