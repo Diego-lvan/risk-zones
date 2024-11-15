@@ -42,7 +42,10 @@
     "react-native-web": "^0.19.12",
     "yup": "^1.4.0",
     "expo-sqlite": "~14.0.6",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-contacts": "~13.0.5",
+    "expo-crypto": "~13.0.2",
+    "@react-native-picker/picker": "2.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
