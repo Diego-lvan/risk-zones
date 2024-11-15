@@ -3,9 +3,12 @@ import { CustomTextInput } from "./custom_text_input";
 import { SendFormButton } from "./send_form_button";
 import { CancelFormButton } from "./cancel_form_button";
 import { useState } from "react";
+import { ContactEntity } from "../../domain/entities/contact_entity";
+import { CustomDropdownPicker } from "./custom_dropdown_picker";
 
 interface ContactFormModalProps {
   showModal: boolean;
+  contacts: ContactEntity[];
   setIsModalVisible: (value: boolean) => void;
   setIsActiveRoute: (value: boolean) => void;
   handleContactPhoneChange: (text: string) => void;
@@ -18,20 +21,30 @@ export const ContactFormModal = ({
   handleContactPhoneChange,
   handlePressStartRoute,
   toggleShowModal,
+  contacts,
 }: ContactFormModalProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const validatePhoneNumber = (text: string) => {
+    console.log("validatePhoneNumber", text);
+    let flag = false;
     setPhoneNumber(text);
     if (/^\d{10}$/.test(text)) {
       setErrorMessage("");
+      flag = true;
     } else if (text.length !== 10) {
       setErrorMessage("El número debe tener 10 caracteres.");
     } else if (!/^\d+$/.test(text)) {
       setErrorMessage("El número solo debe contener dígitos.");
     }
     handleContactPhoneChange(text);
+    return flag;
+  };
+
+  const handleStartRoute = () => {
+    if (!validatePhoneNumber(phoneNumber)) return;
+    handlePressStartRoute();
   };
 
   if (!showModal) return null;
@@ -40,19 +53,19 @@ export const ContactFormModal = ({
     <View style={styles.modalContainer}>
       <Pressable style={styles.emptyView} onPress={toggleShowModal}></Pressable>
       <View style={styles.modal}>
-        <CustomTextInput
-          label="Ingresa tu número de contacto"
-          textInputProps={{
-            onChangeText: validatePhoneNumber,
-            value: phoneNumber,
-          }}
+        <CustomDropdownPicker
+          items={contacts}
+          onSelectionChange={validatePhoneNumber}
         />
-        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+
+        {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
         <View style={styles.buttonContainer}>
           <CancelFormButton text="Cancelar" handleOnPress={toggleShowModal} />
           <SendFormButton
             text="Aceptar"
-            handleOnPress={handlePressStartRoute}
+            handleOnPress={handleStartRoute}
             disabled={!!errorMessage} // Desactiva el botón si hay un error
           />
         </View>

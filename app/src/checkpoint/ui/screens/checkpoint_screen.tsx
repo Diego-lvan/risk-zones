@@ -1,4 +1,10 @@
-import { View, StyleSheet, ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { AddCheckpointButton } from "../components/add_checkpoint_button";
 import { StartRouteButton } from "../components/start_route_button";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -11,10 +17,15 @@ import { Dimensions } from "react-native";
 import { AddButton } from "@/common/components/add_button";
 import { useFocusEffect } from "expo-router";
 import { useDeleteCheckpoint } from "../../hooks/useDeleteCheckpoint";
+import { useHandleContacts } from "../../hooks/useHandleContacts";
+import { AddContactButton } from "../components/add_contact_button";
 
 export const CheckpointScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isActiveRoute, setIsActiveRoute] = useState(false);
+  // Hook para manejar los contactos
+  const { contacts, openContactPicker } = useHandleContacts();
+  // Ref para saber si se necesita obtener nuevamente los checkpoints
   const isRefetchNeeded = useRef(true);
 
   const toggleShowModal = () => {
@@ -22,8 +33,13 @@ export const CheckpointScreen = () => {
     console.log("toggleShowModal");
   };
 
-  const { initialRegion, isLoading, checkpoints, refreshMap, setCheckpoints } = useLoadCheckpoints();
-  const { handlePressStartRoute, handleContactPhoneChange, stopTrackingLocation } = useSendNotification(
+  const { initialRegion, isLoading, checkpoints, refreshMap, setCheckpoints } =
+    useLoadCheckpoints();
+  const {
+    handlePressStartRoute,
+    handleContactPhoneChange,
+    stopTrackingLocation,
+  } = useSendNotification(
     setIsModalVisible,
     setIsActiveRoute,
     isActiveRoute,
@@ -96,16 +112,27 @@ export const CheckpointScreen = () => {
             </Marker>
           ))}
         </MapView>
-        {isLoading && <ActivityIndicator style={mapStyles.loading} size="large" color="#0000ff" />}
+        {isLoading && (
+          <ActivityIndicator
+            style={mapStyles.loading}
+            size="large"
+            color="#0000ff"
+          />
+        )}
       </View>
 
-      <StartRouteButton handleOnPress={handleShowModal} isActiveRoute={isActiveRoute} />
+      <StartRouteButton
+        handleOnPress={handleShowModal}
+        isActiveRoute={isActiveRoute}
+      />
       <AddCheckpointButton
         onPressCallback={() => {
           isRefetchNeeded.current = true;
           console.log("isRefetchNeeded.current", isRefetchNeeded.current);
         }}
       />
+
+      <AddContactButton onPressCallback={openContactPicker} />
 
       <ContactFormModal
         toggleShowModal={toggleShowModal}
@@ -114,6 +141,7 @@ export const CheckpointScreen = () => {
         showModal={isModalVisible}
         setIsModalVisible={setIsModalVisible}
         setIsActiveRoute={setIsActiveRoute}
+        contacts={contacts}
       />
     </View>
   );

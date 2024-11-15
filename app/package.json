@@ -43,7 +43,10 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "^0.19.12",
     "yup": "^1.4.0",
-    "@react-native-community/slider": "4.5.2"
+    "@react-native-community/slider": "4.5.2",
+    "expo-contacts": "~13.0.5",
+    "expo-crypto": "~13.0.2",
+    "@react-native-picker/picker": "2.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
