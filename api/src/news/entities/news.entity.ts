@@ -1,5 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToOne, Point, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, Point, PrimaryGeneratedColumn } from 'typeorm';
+import { Reactions } from './reactions.entity';
 @Entity('news')
 export class News {
   @PrimaryGeneratedColumn()
@@ -19,4 +20,7 @@ export class News {
 
   @Column('geometry', { nullable: false })
   coords: Point;
+
+  @OneToMany(() => Reactions, (reactions) => reactions.news)
+  reactionsList: Reactions[];
 }
