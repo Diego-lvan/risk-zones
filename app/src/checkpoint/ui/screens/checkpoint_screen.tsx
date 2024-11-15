@@ -12,10 +12,14 @@ import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Dimensions } from "react-native";
 import { AddButton } from "@/common/components/add_button";
 import { useFocusEffect } from "expo-router";
+import { useHandleContacts } from "../../hooks/useHandleContacts";
+import { AddContactButton } from "../components/add_contact_button";
 
 export const CheckpointScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isActiveRoute, setIsActiveRoute] = useState(false);
+  // Hook para manejar los contactos
+  const { contacts, openContactPicker } = useHandleContacts();
   // Ref para saber si se necesita obtener nuevamente los checkpoints
   const isRefetchNeeded = useRef(true);
 
@@ -113,6 +117,8 @@ export const CheckpointScreen = () => {
         }}
       />
 
+      <AddContactButton onPressCallback={openContactPicker} />
+
       {/* Mostrar el modal dependiendo de la visibilidad */}
       <ContactFormModal
         toggleShowModal={toggleShowModal}
@@ -121,6 +127,7 @@ export const CheckpointScreen = () => {
         showModal={isModalVisible}
         setIsModalVisible={setIsModalVisible}
         setIsActiveRoute={setIsActiveRoute}
+        contacts={contacts}
       />
     </View>
   );
