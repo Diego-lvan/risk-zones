@@ -1,5 +1,6 @@
 import { NewsDataSource } from "../../domain/datasources/news_datasource";
 import { NewsEntity } from "../../domain/entities/news_entity";
+import { ReactionEntity } from "../../domain/entities/reaction_entity";
 import { NewInfoEntity } from "../../domain/entities/see_new_entity";
 import { NewsRepository } from "../../domain/repositories/news_repository";
 
@@ -18,5 +19,8 @@ export class NewsRepositoryImpl implements NewsRepository {
   }
   async saveNews(news: NewsEntity): Promise<void> {
     return await this.dataSource.saveNews(news);
+  }
+  async updateLikeDislike(reaction: ReactionEntity): Promise<ReactionEntity> {
+    return await this.dataSource.updateLikeDislike(reaction);
   }
 }
