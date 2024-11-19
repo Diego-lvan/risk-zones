@@ -6,6 +6,7 @@ import { ApiError } from "@/src/common/errors/api_error";
 import { NewsEntity } from "@/src/news/domain/entities/news_entity";
 import { NewInfoEntity } from "../../domain/entities/see_new_entity";
 import { NewInfoModel } from "../models/new_info_model";
+import { ReactionEntity } from "../../domain/entities/reaction_entity";
 
 /**
  * Clase que implementa la fuente de datos de noticias
@@ -68,6 +69,31 @@ export class NewsDataSourceImpl implements NewsDataSource {
         ? (apiError.response.data as { message: string }).message
         : "Error desconocido";
       console.log("Error al guardar la noticia:", apiError.response?.data);
+
+      throw new ApiError(message, apiError.response?.status || 500);
+    }
+  }
+  async updateLikeDislike(reaction: ReactionEntity): Promise<ReactionEntity> {
+    try {
+      const { data, status } = await axios.post<ReactionEntity>(
+        `${API_URL}/news/${reaction.newsId}/reactions`,
+        {
+          reactionType: reaction.recationType,
+          userId: reaction.userId,
+          likes: reaction.likes,
+          dislikes: reaction.dislikes,
+        }
+      );
+      if (status !== 200) {
+        throw new Error();
+      }
+      return data;
+    } catch (error) {
+      const apiError = error as AxiosError;
+      const message = apiError.response
+        ? (apiError.response.data as { message: string }).message
+        : "Error desconocido";
+      console.log("Error al enviar la reacción:", apiError.response?.data);
 
       throw new ApiError(message, apiError.response?.status || 500);
     }
