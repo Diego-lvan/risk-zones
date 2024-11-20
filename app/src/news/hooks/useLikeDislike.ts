@@ -1,36 +1,49 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ReactionEntity,
-  ReactionType,
-} from "../domain/entities/reaction_entity";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ReactionType } from "../domain/entities/reaction_entity";
 import { LikeOrDislikeUseCase } from "../domain/use_cases/like_or_dislike_usecase";
 import { useState } from "react";
 import { useUser } from "@/src/user/context/user_context";
 import { showErrorMessage } from "@/src/common/errors/error_message";
 
-interface UseLikeDislikeProps {
-  newsId: number;
-  initialReactions: Pick<ReactionEntity, "likes" | "dislikes">;
-  initialUserReaction?: ReactionType | null;
-}
-
-export const useLikeDislike = ({
-  newsId,
-  initialReactions = { likes: 0, dislikes: 0 },
-  initialUserReaction = null,
-}: UseLikeDislikeProps) => {
+export const useLikeDislike = (newsId: number) => {
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const [reactions, setReactions] = useState(initialReactions);
-  const [currentReaction, setCurrentReaction] = useState<ReactionType | null>(
-    initialUserReaction
-  );
-
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
 
+  const localStorageKey = `reaction-${newsId}`;
+
+  const loadFromLocalStorage = () => {
+    const cachedReactions = localStorage.getItem(localStorageKey);
+    if (cachedReactions) {
+      return JSON.parse(cachedReactions);
+    }
+    return null;
+  };
+
+  // Query para obtener datos iniciales
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["reactions", newsId],
+    queryFn: async () => {
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+      const cachedData = loadFromLocalStorage();
+      if (cachedData) return cachedData;
+
+      // Usamos `execute` como fuente de datos iniciales
+      return await likeOrDislikeUseCase.execute({
+        newsId,
+        userId: user.id,
+        reactionType: "like" as "like" | "dislike",
+      });
+    },
+    staleTime: 5000,
+    refetchOnWindowFocus: false,
+  });
+
+  // Manejo de mutaciones para optimismo
   const mutation = useMutation({
     mutationFn: async (reactionType: ReactionType) => {
-      console.log("Enviando newsId:", newsId);
       if (!user) {
         throw new Error("User not authenticated");
       }
@@ -41,48 +54,50 @@ export const useLikeDislike = ({
       });
     },
     onMutate: async (reactionType) => {
-      const previousReaction = currentReaction;
-      const previousReactions = { ...reactions };
+      const previousReactions = queryClient.getQueryData(["reactions", newsId]);
 
-      // Optimistic Update
-      setReactions((prev) => {
-        const updated = { ...prev };
+      // Actualización optimista
+      queryClient.setQueryData(["reactions", newsId], (oldData: any) => {
+        if (!oldData) return oldData;
 
-        if (previousReaction) {
-          updated[`${previousReaction}s`]--;
+        const updatedReactions = { ...oldData };
+
+        if (oldData.userReaction) {
+          updatedReactions[`${oldData.userReaction}s`]--;
         }
 
-        if (reactionType !== previousReaction) {
-          updated[`${reactionType}s` as "likes" | "dislikes"]++;
+        if (reactionType !== oldData.userReaction) {
+          updatedReactions[`${reactionType}s`]++;
         }
 
-        return updated;
+        updatedReactions.userReaction =
+          reactionType === oldData.userReaction ? null : reactionType;
+
+        return updatedReactions;
       });
 
-      setCurrentReaction(
-        reactionType === currentReaction ? null : reactionType
-      );
-
-      return { previousReaction, previousReactions };
+      return { previousReactions };
     },
     onError: (error, _, context) => {
-      // Revert optimistic updates
-      setReactions(context?.previousReactions || initialReactions);
-      setCurrentReaction(context?.previousReaction || initialUserReaction);
-
+      // Revertir cambios optimistas
+      queryClient.setQueryData(
+        ["reactions", newsId],
+        context?.previousReactions
+      );
       showErrorMessage(
         error instanceof Error ? error.message : "Failed to update reaction"
       );
     },
     onSettled: () => {
-      // Sync with server
-      queryClient.invalidateQueries({ queryKey: ["news", newsId] });
+      queryClient.invalidateQueries({ queryKey: ["reactions", newsId] });
     },
   });
 
   const handleReaction = (type: ReactionType) => {
     if (!user) {
-      showErrorMessage("Please login to react to news");
+      showErrorMessage(
+        "Por favor inicia sesión para reaccionar a las noticias."
+      );
       return;
     }
 
@@ -90,9 +105,10 @@ export const useLikeDislike = ({
   };
 
   return {
-    reactions,
-    currentReaction,
-    mutation,
+    reactions: data || { likes: 0, dislikes: 0, userReaction: null },
+    isLoading,
+    isError,
+    refetch,
     handleReaction,
   };
 };

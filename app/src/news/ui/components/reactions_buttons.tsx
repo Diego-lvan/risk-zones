@@ -22,7 +22,7 @@ export const ReactionsButtons = ({
 }: ReactionButtonsProps) => {
   const handleReaction = (type: "like" | "dislike") => {
     if (!isLoading) {
-      onReaction(type);
+      onReaction(type); // Llamada a la función que actualiza el estado de la reacción
     }
   };
 
