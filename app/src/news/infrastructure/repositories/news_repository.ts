@@ -20,7 +20,11 @@ export class NewsRepositoryImpl implements NewsRepository {
   async saveNews(news: NewsEntity): Promise<void> {
     return await this.dataSource.saveNews(news);
   }
-  async updateLikeDislike(reaction: ReactionEntity): Promise<ReactionEntity> {
-    return await this.dataSource.updateLikeDislike(reaction);
+  async updateLikeDislike(params: {
+    newsId: number;
+    userId: string;
+    reactionType: "like" | "dislike";
+  }): Promise<ReactionEntity> {
+    return await this.dataSource.updateLikeDislike(params);
   }
 }

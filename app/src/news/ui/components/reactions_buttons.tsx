@@ -1,42 +1,28 @@
 import React, { useState } from "react";
-import { View, Button, Text, TouchableOpacity, Image } from "react-native";
-import { useLikeDislike } from "../../hooks/useLikeDislike";
-import { ReactionEntity } from "../../domain/entities/reaction_entity";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import {
+  ReactionEntity,
+  ReactionType,
+} from "../../domain/entities/reaction_entity";
 
 interface ReactionButtonsProps {
-  reactionInfo: ReactionEntity;
+  likes: number;
+  dislikes: number;
+  userReaction: ReactionType;
+  onReaction: (type: "like" | "dislike") => void;
+  isLoading?: boolean;
 }
 
 export const ReactionsButtons = ({
-  reactionInfo: { likes, dislikes },
+  likes,
+  dislikes,
+  userReaction,
+  onReaction,
+  isLoading = false,
 }: ReactionButtonsProps) => {
-  const [userReaction, setUserReaction] = useState<"like" | "dislike" | null>(
-    null
-  );
-
-  const handleLike = () => {
-    if (userReaction === "like") {
-      //setLikes((prevLikes) => prevLikes - 1);
-      setUserReaction(null);
-    } else {
-      //setLikes((prevLikes) => prevLikes + 1);
-      if (userReaction === "dislike") {
-        //setDislikes((prevDislikes) => prevDislikes - 1);
-      }
-      setUserReaction("like");
-    }
-  };
-
-  const handleDislike = () => {
-    if (userReaction === "dislike") {
-      //setDislikes((prevDislikes) => prevDislikes - 1);
-      setUserReaction(null);
-    } else {
-      //setDislikes((prevDislikes) => prevDislikes + 1);
-      if (userReaction === "like") {
-        //setLikes((prevLikes) => prevLikes - 1);
-      }
-      setUserReaction("dislike");
+  const handleReaction = (type: "like" | "dislike") => {
+    if (!isLoading) {
+      onReaction(type);
     }
   };
 
@@ -49,7 +35,7 @@ export const ReactionsButtons = ({
       }}
     >
       <View style={{ alignItems: "center", marginRight: 20 }}>
-        <TouchableOpacity onPress={handleLike}>
+        <TouchableOpacity onPress={() => handleReaction("like")}>
           <Image
             source={
               userReaction === "like"
@@ -62,7 +48,7 @@ export const ReactionsButtons = ({
         <Text style={{ marginTop: 5 }}>{likes}</Text>
       </View>
       <View style={{ alignItems: "center", marginRight: 20 }}>
-        <TouchableOpacity onPress={handleDislike}>
+        <TouchableOpacity onPress={() => handleReaction("dislike")}>
           <Image
             source={
               userReaction === "dislike"

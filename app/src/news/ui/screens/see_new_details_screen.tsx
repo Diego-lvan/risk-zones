@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useLoadNews } from "../../hooks/useLoadNews";
 import { FullLoaderScreen } from "@/common/screens/full_loader_screen";
 import { FullRetryScreen } from "@/common/screens/full_retry_screen";
@@ -10,7 +10,6 @@ import { ReactionEntity } from "../../domain/entities/reaction_entity";
 
 interface SeeNewDetailsProps {
   newId: number;
-  reactions: ReactionEntity;
 }
 
 /**
@@ -18,12 +17,15 @@ interface SeeNewDetailsProps {
  * @param newId Identificador de la noticia
  * @returns Pantalla con los detalles de la noticia
  */
-export const SeeNewDetailsScreen = ({
-  newId,
-  reactions,
-}: SeeNewDetailsProps) => {
+export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
   const { query } = useLoadNews(newId);
-  const { queryReaction } = useLikeDislike(reactions);
+  const { reactions, currentReaction, mutation, handleReaction } =
+    useLikeDislike({
+      newsId: newId,
+      initialReactions: { likes: 0, dislikes: 0 },
+    });
+  const initialReactions = reactions || { likes: 0, dislikes: 0 };
+  console.log("newId recibido:", newId);
 
   if (query.isLoading) {
     return <FullLoaderScreen />;
@@ -39,9 +41,12 @@ export const SeeNewDetailsScreen = ({
       contentContainerStyle={styles.innerContainer}
     >
       <NewPost newInfo={query.data} />
-      {queryReaction.data && (
-        <ReactionsButtons reactionInfo={queryReaction.data} />
-      )}
+      <ReactionsButtons
+        likes={reactions?.likes || 0}
+        dislikes={reactions?.dislikes || 0}
+        userReaction={mutation.data?.reactionType || null}
+        onReaction={handleReaction}
+      />
     </ScrollView>
   );
 };

@@ -7,6 +7,7 @@ import { NewsEntity } from "@/src/news/domain/entities/news_entity";
 import { NewInfoEntity } from "../../domain/entities/see_new_entity";
 import { NewInfoModel } from "../models/new_info_model";
 import { ReactionEntity } from "../../domain/entities/reaction_entity";
+import { ReactionModel } from "../models/reaction_model";
 
 /**
  * Clase que implementa la fuente de datos de noticias
@@ -73,23 +74,36 @@ export class NewsDataSourceImpl implements NewsDataSource {
       throw new ApiError(message, apiError.response?.status || 500);
     }
   }
-  async updateLikeDislike(reaction: ReactionEntity): Promise<ReactionEntity> {
+  async updateLikeDislike(params: {
+    newsId: number;
+    userId: string;
+    reactionType: "like" | "dislike";
+  }): Promise<ReactionEntity> {
+    const { newsId, userId, reactionType } = params;
     try {
-      const { data, status } = await axios.post<ReactionEntity>(
-        `${API_URL}/news/${reaction.newsId}/reactions`,
+      const { data, status } = await axios.post<ReactionModel>(
+        `${API_URL}/news/${newsId}/reactions`,
         {
-          reactionType: reaction.recationType,
-          userId: reaction.userId,
-          likes: reaction.likes,
-          dislikes: reaction.dislikes,
+          userId,
+          reactionType,
         }
       );
+      console.log("Datos que se reciben del backend:", data);
       if (status !== 200) {
-        throw new Error();
+        throw new Error(`Error al actualizar la reacción: ${status}`);
       }
-      return data;
+      console.log("Respuesta del backend:", data);
+
+      return {
+        newsId: data.newsId,
+        likes: data.likes,
+        dislikes: data.dislikes,
+        userId: userId,
+        reactionType: reactionType,
+      };
     } catch (error) {
       const apiError = error as AxiosError;
+
       const message = apiError.response
         ? (apiError.response.data as { message: string }).message
         : "Error desconocido";

@@ -1,33 +1,98 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ReactionEntity } from "../domain/entities/reaction_entity";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  ReactionEntity,
+  ReactionType,
+} from "../domain/entities/reaction_entity";
 import { LikeOrDislikeUseCase } from "../domain/use_cases/like_or_dislike_usecase";
 import { useState } from "react";
 import { useUser } from "@/src/user/context/user_context";
+import { showErrorMessage } from "@/src/common/errors/error_message";
 
-export const useLikeDislike = (reaction: ReactionEntity) => {
+interface UseLikeDislikeProps {
+  newsId: number;
+  initialReactions: Pick<ReactionEntity, "likes" | "dislikes">;
+  initialUserReaction?: ReactionType | null;
+}
+
+export const useLikeDislike = ({
+  newsId,
+  initialReactions = { likes: 0, dislikes: 0 },
+  initialUserReaction = null,
+}: UseLikeDislikeProps) => {
   const { user } = useUser();
-  const [useCase] = useState(() => new LikeOrDislikeUseCase());
+  const queryClient = useQueryClient();
+  const [reactions, setReactions] = useState(initialReactions);
+  const [currentReaction, setCurrentReaction] = useState<ReactionType | null>(
+    initialUserReaction
+  );
 
-  // Query para obtener las reacciones iniciales
-  const queryReaction = useQuery({
-    queryKey: ["reactions", reaction],
-    queryFn: async () => await useCase.execute(reaction),
-    staleTime: 300000,
-  });
+  const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
 
-  // Mutation para actualizar las reacciones
   const mutation = useMutation({
-    mutationFn: (reactionType: "like" | "dislike") => useCase.execute(reaction),
-    onSuccess: () => {
-      queryReaction.refetch();
+    mutationFn: async (reactionType: ReactionType) => {
+      console.log("Enviando newsId:", newsId);
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+      return await likeOrDislikeUseCase.execute({
+        newsId,
+        userId: user.id,
+        reactionType: reactionType as "like" | "dislike",
+      });
+    },
+    onMutate: async (reactionType) => {
+      const previousReaction = currentReaction;
+      const previousReactions = { ...reactions };
+
+      // Optimistic Update
+      setReactions((prev) => {
+        const updated = { ...prev };
+
+        if (previousReaction) {
+          updated[`${previousReaction}s`]--;
+        }
+
+        if (reactionType !== previousReaction) {
+          updated[`${reactionType}s` as "likes" | "dislikes"]++;
+        }
+
+        return updated;
+      });
+
+      setCurrentReaction(
+        reactionType === currentReaction ? null : reactionType
+      );
+
+      return { previousReaction, previousReactions };
+    },
+    onError: (error, _, context) => {
+      // Revert optimistic updates
+      setReactions(context?.previousReactions || initialReactions);
+      setCurrentReaction(context?.previousReaction || initialUserReaction);
+
+      showErrorMessage(
+        error instanceof Error ? error.message : "Failed to update reaction"
+      );
+    },
+    onSettled: () => {
+      // Sync with server
+      queryClient.invalidateQueries({ queryKey: ["news", newsId] });
     },
   });
 
+  const handleReaction = (type: ReactionType) => {
+    if (!user) {
+      showErrorMessage("Please login to react to news");
+      return;
+    }
+
+    mutation.mutate(type);
+  };
+
   return {
-    reactions: queryReaction.data,
-    isLoading: queryReaction.isLoading,
-    error: queryReaction.error,
-    updateLikeOrDislike: mutation.mutate,
-    queryReaction,
+    reactions,
+    currentReaction,
+    mutation,
+    handleReaction,
   };
 };

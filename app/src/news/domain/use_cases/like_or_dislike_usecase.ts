@@ -3,6 +3,11 @@ import { NewsRepositoryImpl } from "../../infrastructure/repositories/news_repos
 import { ReactionEntity } from "../entities/reaction_entity";
 import { NewsRepository } from "../repositories/news_repository";
 
+interface LikeOrDislikeParams {
+  newsId: number;
+  userId: string;
+  reactionType: "like" | "dislike";
+}
 /**
  * Use case to react to a news (like or dislike)
  * @class LikeOrDislikeUseCase
@@ -21,7 +26,7 @@ export class LikeOrDislikeUseCase {
    * @param reactionType The type of reaction ('like' or 'dislike')
    * @returns The updated reaction count
    */
-  async execute(reaction: ReactionEntity) {
-    return this.newsRepository.updateLikeDislike(reaction);
+  async execute(params: LikeOrDislikeParams): Promise<ReactionEntity> {
+    return this.newsRepository.updateLikeDislike(params);
   }
 }
