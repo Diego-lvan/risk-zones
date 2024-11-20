@@ -82,7 +82,9 @@ export const useLikeDislike = ({
 
   const handleReaction = (type: ReactionType) => {
     if (!user) {
-      showErrorMessage("Please login to react to news");
+      showErrorMessage(
+        "Por favor inicia sesión para reaccionar a las noticias."
+      );
       return;
     }
 
