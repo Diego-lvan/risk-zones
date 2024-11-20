@@ -90,7 +90,7 @@ export class NewsDataSourceImpl implements NewsDataSource {
         }
       );
       console.log("Datos que se reciben del backend 2:", data);
-      if (status !== 200) {
+      if (status !== 200 && status !== 201) {
         throw new Error(`Error al actualizar la reacción: ${status}`);
       }
       console.log("Respuesta del backend:", data);
@@ -107,7 +107,7 @@ export class NewsDataSourceImpl implements NewsDataSource {
 
       const message = apiError.response
         ? (apiError.response.data as { message: string }).message
-        : "Error desconocido";
+        : apiError.message || "Error desconocido";
       console.log("Error al enviar la reacción:", apiError.response?.data);
 
       throw new ApiError(message, apiError.response?.status || 500);
