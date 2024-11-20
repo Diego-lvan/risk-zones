@@ -10,16 +10,6 @@ export const useLikeDislike = (newsId: number) => {
   const queryClient = useQueryClient();
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
 
-  const localStorageKey = `reaction-${newsId}`;
-
-  const loadFromLocalStorage = () => {
-    const cachedReactions = localStorage.getItem(localStorageKey);
-    if (cachedReactions) {
-      return JSON.parse(cachedReactions);
-    }
-    return null;
-  };
-
   // Query para obtener datos iniciales
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reactions", newsId],
@@ -27,8 +17,6 @@ export const useLikeDislike = (newsId: number) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      const cachedData = loadFromLocalStorage();
-      if (cachedData) return cachedData;
 
       // Usamos `execute` como fuente de datos iniciales
       return await likeOrDislikeUseCase.execute({
@@ -105,7 +93,7 @@ export const useLikeDislike = (newsId: number) => {
   };
 
   return {
-    reactions: data || { likes: 0, dislikes: 0, userReaction: null },
+    reactions: data || { likes: 0, dislikes: 0, reactionType: null },
     isLoading,
     isError,
     refetch,

@@ -35,9 +35,6 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
     return <FullRetryScreen retryCallback={query.refetch} />;
   }
 
-  const userReaction =
-    "userReaction" in reactions ? reactions.userReaction : null;
-
   return (
     <ScrollView
       style={styles.container}
@@ -47,7 +44,7 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
       <ReactionsButtons
         likes={reactions?.likes || 0}
         dislikes={reactions?.dislikes || 0}
-        userReaction={userReaction}
+        userReaction={reactions?.reactionType}
         onReaction={handleReaction}
       />
     </ScrollView>

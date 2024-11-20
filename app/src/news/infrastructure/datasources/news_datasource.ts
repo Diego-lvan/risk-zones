@@ -100,7 +100,7 @@ export class NewsDataSourceImpl implements NewsDataSource {
         likes: data.likes,
         dislikes: data.dislikes,
         userId: userId,
-        reactionType: reactionType,
+        reactionType: data.reactionType,
       };
     } catch (error) {
       const apiError = error as AxiosError;
