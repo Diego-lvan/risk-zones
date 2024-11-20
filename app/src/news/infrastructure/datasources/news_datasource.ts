@@ -84,18 +84,19 @@ export class NewsDataSourceImpl implements NewsDataSource {
       const { data, status } = await axios.post<ReactionModel>(
         `${API_URL}/news/${newsId}/reactions`,
         {
+          newsId,
           userId,
           reactionType,
         }
       );
-      console.log("Datos que se reciben del backend:", data);
+      console.log("Datos que se reciben del backend 2:", data);
       if (status !== 200) {
         throw new Error(`Error al actualizar la reacción: ${status}`);
       }
       console.log("Respuesta del backend:", data);
 
       return {
-        newsId: data.newsId,
+        newsId: newsId,
         likes: data.likes,
         dislikes: data.dislikes,
         userId: userId,
