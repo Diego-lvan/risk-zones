@@ -10,6 +10,16 @@ export const useLikeDislike = (newsId: number) => {
   const queryClient = useQueryClient();
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
 
+  const localStorageKey = `reaction-${newsId}`;
+
+  const loadFromLocalStorage = () => {
+    const cachedReactions = localStorage.getItem(localStorageKey);
+    if (cachedReactions) {
+      return JSON.parse(cachedReactions);
+    }
+    return null;
+  };
+
   // Query para obtener datos iniciales
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reactions", newsId],
@@ -17,16 +27,18 @@ export const useLikeDislike = (newsId: number) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
+      const cachedData = loadFromLocalStorage();
+      if (cachedData) return cachedData;
 
       // Usamos `execute` como fuente de datos iniciales
       return await likeOrDislikeUseCase.execute({
         newsId,
         userId: user.id,
-        reactionType: "like", // Este valor puede ser ignorado según la lógica interna
+        reactionType: "like" as "like" | "dislike",
       });
     },
-    staleTime: 5000, // Configuración opcional para refrescar datos
-    refetchOnWindowFocus: false, // Configuración opcional para evitar recargas innecesarias
+    staleTime: 5000,
+    refetchOnWindowFocus: false,
   });
 
   // Manejo de mutaciones para optimismo
