@@ -19,12 +19,12 @@ interface SeeNewDetailsProps {
  */
 export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
   const { query } = useLoadNews(newId);
-  const { reactions, currentReaction, mutation, handleReaction } =
-    useLikeDislike({
-      newsId: newId,
-      initialReactions: { likes: 0, dislikes: 0 },
-    });
-  const initialReactions = reactions || { likes: 0, dislikes: 0 };
+  const {
+    reactions,
+    isLoading: isReactionsLoading,
+    handleReaction,
+  } = useLikeDislike(newId);
+
   console.log("newId recibido:", newId);
 
   if (query.isLoading) {
@@ -35,6 +35,9 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
     return <FullRetryScreen retryCallback={query.refetch} />;
   }
 
+  const userReaction =
+    "userReaction" in reactions ? reactions.userReaction : null;
+
   return (
     <ScrollView
       style={styles.container}
@@ -44,7 +47,7 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
       <ReactionsButtons
         likes={reactions?.likes || 0}
         dislikes={reactions?.dislikes || 0}
-        userReaction={mutation.data?.reactionType || null}
+        userReaction={userReaction}
         onReaction={handleReaction}
       />
     </ScrollView>
