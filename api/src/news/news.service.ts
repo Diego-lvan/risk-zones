@@ -96,22 +96,17 @@ export class NewsService {
     if (!user) {
       throw new Error('User not found');
     }
-    let reaction = await this.findReaction(newId, userId);
-    if (reactionType === null) {
-      if (reaction) {
-        // Eliminar la reacción si existe
-        await this.reactionRepository.remove(reaction);
-        return { message: 'Reacción eliminada' };
+    if (reactionType !== null) {
+      let reaction = await this.findReaction(newId, userId);
+      if (!reaction) {
+        reaction = new Reactions();
+        reaction.news = news;
+        reaction.user = user;
       }
-      return { message: 'No hay reacción para eliminar' };
+      reaction.reactionType = reactionType;
+      await this.saveOrUpdateReaction(reaction);
     }
-    if (!reaction) {
-      reaction = new Reactions();
-      reaction.news = news;
-      reaction.user = user;
-    }
-    reaction.reactionType = reactionType;
-    await this.saveOrUpdateReaction(reaction);
+
     // Contar el número de likes para la noticia
     const likeCount = await this.reactionRepository.count({
       where: {
@@ -132,7 +127,7 @@ export class NewsService {
       newsId: news.id,
       likes: likeCount,
       dislikes: dislikeCount,
-      reactionType: reaction.reactionType,
+      reactionType: reactionType,
     };
   }
 

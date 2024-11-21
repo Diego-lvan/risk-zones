@@ -9,7 +9,7 @@ interface ReactionButtonsProps {
   likes: number;
   dislikes: number;
   userReaction: ReactionType;
-  onReaction: (type: "like" | "dislike" | null) => void;
+  onReaction: (type: "like" | "dislike") => void;
   isLoading?: boolean;
   //refetchReactions: () => void;
 }
@@ -24,8 +24,8 @@ export const ReactionsButtons = ({
 ReactionButtonsProps) => {
   const handleReaction = (type: "like" | "dislike") => {
     if (!isLoading) {
-      if (userReaction === type) {
-        onReaction(null);
+      if (userReaction !== type) {
+        onReaction(type);
       } else {
         onReaction(type); // Llamada a la función que actualiza el estado de la reacción
       }
@@ -42,7 +42,10 @@ ReactionButtonsProps) => {
       }}
     >
       <View style={{ alignItems: "center", marginRight: 20 }}>
-        <TouchableOpacity onPress={() => handleReaction("like")}>
+        <TouchableOpacity
+          style={{ padding: 15 }}
+          onPress={() => handleReaction("like")}
+        >
           <Image
             source={
               userReaction === "like"
@@ -55,7 +58,10 @@ ReactionButtonsProps) => {
         <Text style={{ marginTop: 5 }}>{likes}</Text>
       </View>
       <View style={{ alignItems: "center", marginRight: 20 }}>
-        <TouchableOpacity onPress={() => handleReaction("dislike")}>
+        <TouchableOpacity
+          style={{ padding: 15 }}
+          onPress={() => handleReaction("dislike")}
+        >
           <Image
             source={
               userReaction === "dislike"

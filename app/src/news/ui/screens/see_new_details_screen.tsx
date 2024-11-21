@@ -6,7 +6,10 @@ import { APP_THEME } from "@/common/theme/theme";
 import { NewPost } from "../components/new_post";
 import { ReactionsButtons } from "../components/reactions_buttons";
 import { useLikeDislike } from "../../hooks/useLikeDislike";
-import { ReactionEntity } from "../../domain/entities/reaction_entity";
+import {
+  ReactionEntity,
+  ReactionType,
+} from "../../domain/entities/reaction_entity";
 import { isLoading } from "expo-font";
 import { useEffect, useState } from "react";
 
@@ -28,19 +31,14 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
     refetchReactions,
   } = useLikeDislike(newId);
   const [isReactionsFetched, setIsReactionsFetched] = useState(false);
-
+  const [userReaction, setUserReaction] = useState<ReactionType>(null);
   console.log("newId recibido:", newId);
 
   useEffect(() => {
-    refetchReactions();
-  }, [newId, refetchReactions]);
-
-  useEffect(() => {
-    // Esperamos a que las reacciones se carguen correctamente
-    if (!isReactionsLoading && reactions) {
-      setIsReactionsFetched(true);
+    if (reactions) {
+      setUserReaction(reactions?.reactionType);
     }
-  }, [reactions, isReactionsLoading]);
+  }, [reactions]);
 
   if (query.isLoading) {
     return <FullLoaderScreen />;

@@ -14,6 +14,7 @@ export const useLikeDislike = (newsId: number) => {
   const [reactionType, setReactionType] = useState<ReactionType>(null);
 
   // Query para obtener datos iniciales
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reactions", newsId],
     queryFn: async () => {
@@ -27,10 +28,15 @@ export const useLikeDislike = (newsId: number) => {
         reactionType: reactionType,
       });
     },
-    staleTime: 5000,
+    staleTime: 500,
     refetchOnWindowFocus: true,
     enabled: !!user,
   });
+  useEffect(() => {
+    if (refetch) {
+      refetch();
+    }
+  }, []);
 
   useEffect(() => {
     // Establecer el estado de reactionType cuando los detalles de la noticia se cargan
@@ -61,16 +67,25 @@ export const useLikeDislike = (newsId: number) => {
 
         const updatedReactions = { ...oldData };
 
-        if (reactionType === null) {
-          if (oldData.reactionType === "like") updatedReactions.likes--;
-          if (oldData.reactionType === "dislike") updatedReactions.dislikes--;
-        }
+        // Si el usuario está cambiando su reacción
         if (reactionType !== oldData.reactionType) {
-          if (reactionType === "like") updatedReactions.likes++;
-          if (reactionType === "dislike") updatedReactions.dislikes++;
+          // Decrementar la reacción anterior
+          if (oldData.reactionType === "like") {
+            updatedReactions.likes--;
+          } else if (oldData.reactionType === "dislike") {
+            updatedReactions.dislikes--;
+          }
+
+          // Incrementar la nueva reacción
+          if (reactionType === "like") {
+            updatedReactions.likes++;
+          } else if (reactionType === "dislike") {
+            updatedReactions.dislikes++;
+          }
         }
 
-        updatedReactions.reactionType = reactionType; // Actualizamos el tipo de reacción
+        // Actualizamos el tipo de reacción
+        updatedReactions.reactionType = reactionType;
         return updatedReactions;
       });
 
@@ -92,10 +107,9 @@ export const useLikeDislike = (newsId: number) => {
       console.error("Reacción no válida");
       return;
     }
-    // Si la reacción actual es la misma que la nueva, la eliminamos (ponemos reactionType a null)
     if (reactionType === type) {
-      setReactionType(null); // Remover la reacción
-      mutation.mutate(null); // Enviar null al backend
+      setReactionType(type);
+      mutation.mutate(type);
     } else {
       setReactionType(type); // Cambiar la reacción a "like" o "dislike"
       mutation.mutate(type); // Enviar la nueva reacción al backend

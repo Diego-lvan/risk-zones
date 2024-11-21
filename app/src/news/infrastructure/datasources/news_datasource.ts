@@ -77,19 +77,10 @@ export class NewsDataSourceImpl implements NewsDataSource {
   async updateLikeDislike(params: {
     newsId: number;
     userId: string;
-    reactionType: "like" | "dislike";
+    reactionType: "like" | "dislike" | null;
   }): Promise<ReactionEntity> {
     const { newsId, userId, reactionType } = params;
-    if (reactionType === null) {
-      console.log("No se enviará la reacción porque no se ha seleccionado.");
-      return {
-        newsId: newsId,
-        likes: 0,
-        dislikes: 0,
-        userId: userId,
-        reactionType: reactionType,
-      }; // No hacer nada
-    }
+
     try {
       console.log("Reacción seleccionada:", reactionType);
       const { data, status } = await axios.post<ReactionModel>(
