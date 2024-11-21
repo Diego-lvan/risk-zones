@@ -6,7 +6,7 @@ import { NewsRepository } from "../repositories/news_repository";
 interface LikeOrDislikeParams {
   newsId: number;
   userId: string;
-  reactionType: "like" | "dislike";
+  reactionType: "like" | "dislike" | null;
 }
 /**
  * Use case to react to a news (like or dislike)

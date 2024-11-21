@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactionType } from "../domain/entities/reaction_entity";
 import { LikeOrDislikeUseCase } from "../domain/use_cases/like_or_dislike_usecase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/src/user/context/user_context";
 import { showErrorMessage } from "@/src/common/errors/error_message";
 
@@ -9,25 +9,42 @@ export const useLikeDislike = (newsId: number) => {
   const { user } = useUser();
   const queryClient = useQueryClient();
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
+  const [reactions, setReactions] = useState(null);
+
+  const [reactionType, setReactionType] = useState<ReactionType>(null);
 
   // Query para obtener datos iniciales
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reactions", newsId],
     queryFn: async () => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-
       // Usamos `execute` como fuente de datos iniciales
       return await likeOrDislikeUseCase.execute({
         newsId,
         userId: user.id,
-        reactionType: "like" as "like" | "dislike",
+        reactionType: reactionType,
       });
     },
-    staleTime: 5000,
-    refetchOnWindowFocus: false,
+    staleTime: 500,
+    refetchOnWindowFocus: true,
+    enabled: !!user,
   });
+  useEffect(() => {
+    if (refetch) {
+      refetch();
+    }
+  }, []);
+
+  useEffect(() => {
+    // Establecer el estado de reactionType cuando los detalles de la noticia se cargan
+    if (data && data.reactionType !== null) {
+      console.log("Datos recibidos del backend:", data);
+      setReactionType(data.reactionType);
+    }
+  }, [data]);
 
   // Manejo de mutaciones para optimismo
   const mutation = useMutation({
@@ -38,7 +55,7 @@ export const useLikeDislike = (newsId: number) => {
       return await likeOrDislikeUseCase.execute({
         newsId,
         userId: user.id,
-        reactionType: reactionType as "like" | "dislike",
+        reactionType: reactionType,
       });
     },
     onMutate: async (reactionType) => {
@@ -50,31 +67,29 @@ export const useLikeDislike = (newsId: number) => {
 
         const updatedReactions = { ...oldData };
 
-        if (oldData.userReaction) {
-          updatedReactions[`${oldData.userReaction}s`]--;
+        // Si el usuario está cambiando su reacción
+        if (reactionType !== oldData.reactionType) {
+          // Decrementar la reacción anterior
+          if (oldData.reactionType === "like") {
+            updatedReactions.likes--;
+          } else if (oldData.reactionType === "dislike") {
+            updatedReactions.dislikes--;
+          }
+
+          // Incrementar la nueva reacción
+          if (reactionType === "like") {
+            updatedReactions.likes++;
+          } else if (reactionType === "dislike") {
+            updatedReactions.dislikes++;
+          }
         }
 
-        if (reactionType !== oldData.userReaction) {
-          updatedReactions[`${reactionType}s`]++;
-        }
-
-        updatedReactions.userReaction =
-          reactionType === oldData.userReaction ? null : reactionType;
-
+        // Actualizamos el tipo de reacción
+        updatedReactions.reactionType = reactionType;
         return updatedReactions;
       });
 
       return { previousReactions };
-    },
-    onError: (error, _, context) => {
-      // Revertir cambios optimistas
-      queryClient.setQueryData(
-        ["reactions", newsId],
-        context?.previousReactions
-      );
-      showErrorMessage(
-        error instanceof Error ? error.message : "Failed to update reaction"
-      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["reactions", newsId] });
@@ -88,15 +103,24 @@ export const useLikeDislike = (newsId: number) => {
       );
       return;
     }
-
-    mutation.mutate(type);
+    if (!type) {
+      console.error("Reacción no válida");
+      return;
+    }
+    if (reactionType === type) {
+      setReactionType(type);
+      mutation.mutate(type);
+    } else {
+      setReactionType(type); // Cambiar la reacción a "like" o "dislike"
+      mutation.mutate(type); // Enviar la nueva reacción al backend
+    }
   };
 
   return {
-    reactions: data || { likes: 0, dislikes: 0, reactionType: null },
+    reactions: data,
     isLoading,
     isError,
-    refetch,
+    refetchReactions: refetch,
     handleReaction,
   };
 };

@@ -87,7 +87,7 @@ export class NewsService {
    * @param reactionType The type of reaction ('like' or 'dislike')
    * @returns The updated news with the new reaction count
    */
-  async addReaction(newId: number, userId: string, reactionType: 'like' | 'dislike') {
+  async addReaction(newId: number, userId: string, reactionType: 'like' | 'dislike' | null) {
     const news = await this.newsRepository.findOneBy({ id: newId });
     if (!news) {
       throw new NewNotFoundError();
@@ -96,14 +96,17 @@ export class NewsService {
     if (!user) {
       throw new Error('User not found');
     }
-    let reaction = await this.findReaction(newId, userId);
-    if (!reaction) {
-      reaction = new Reactions();
-      reaction.news = news;
-      reaction.user = user;
+    if (reactionType !== null) {
+      let reaction = await this.findReaction(newId, userId);
+      if (!reaction) {
+        reaction = new Reactions();
+        reaction.news = news;
+        reaction.user = user;
+      }
+      reaction.reactionType = reactionType;
+      await this.saveOrUpdateReaction(reaction);
     }
-    reaction.reactionType = reactionType;
-    await this.saveOrUpdateReaction(reaction);
+
     // Contar el número de likes para la noticia
     const likeCount = await this.reactionRepository.count({
       where: {
@@ -124,7 +127,7 @@ export class NewsService {
       newsId: news.id,
       likes: likeCount,
       dislikes: dislikeCount,
-      reactionType,
+      reactionType: reactionType,
     };
   }
 

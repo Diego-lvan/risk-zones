@@ -8,6 +8,6 @@ export interface NewsDataSource {
   updateLikeDislike(params: {
     newsId: number;
     userId: string;
-    reactionType: "like" | "dislike";
+    reactionType: "like" | "dislike" | null;
   }): Promise<ReactionEntity>;
 }

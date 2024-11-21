@@ -13,7 +13,6 @@ export class ReactionDto {
   userId: string;
 
   @ApiProperty({ description: 'Tipo de reacción' })
-  @IsEnum(['like', 'dislike'])
-  @IsNotEmpty()
-  reactionType: 'like' | 'dislike';
+  @IsEnum(['like', 'dislike', null])
+  reactionType: 'like' | 'dislike' | null;
 }

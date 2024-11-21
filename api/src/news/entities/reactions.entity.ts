@@ -7,7 +7,7 @@ export class Reactions {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum', enum: ['like', 'dislike'], nullable: false })
+  @Column({ type: 'enum', enum: ['like', 'dislike', null], nullable: false })
   reactionType: string;
 
   @ManyToOne(() => User, (user) => user.reactionsList, { nullable: true })
