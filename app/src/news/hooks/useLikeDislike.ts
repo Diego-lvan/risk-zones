@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ReactionType } from "../domain/entities/reaction_entity";
 import { LikeOrDislikeUseCase } from "../domain/use_cases/like_or_dislike_usecase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/src/user/context/user_context";
 import { showErrorMessage } from "@/src/common/errors/error_message";
 
@@ -10,6 +10,8 @@ export const useLikeDislike = (newsId: number) => {
   const queryClient = useQueryClient();
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
 
+  const [reactionType, setReactionType] = useState<ReactionType | null>(null);
+
   // Query para obtener datos iniciales
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["reactions", newsId],
@@ -17,17 +19,27 @@ export const useLikeDislike = (newsId: number) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-
+      /**if (reactionType == null) {
+        return { likes: 0, dislikes: 0, reactionType: null };
+      }**/
       // Usamos `execute` como fuente de datos iniciales
       return await likeOrDislikeUseCase.execute({
         newsId,
         userId: user.id,
-        reactionType: "like" as "like" | "dislike",
+        reactionType: reactionType,
       });
     },
     staleTime: 5000,
     refetchOnWindowFocus: false,
+    enabled: !!user,
   });
+
+  useEffect(() => {
+    // Establecer el estado de reactionType cuando los detalles de la noticia se cargan
+    if (data && data.reactionType) {
+      setReactionType(data.reactionType);
+    }
+  }, [data]);
 
   // Manejo de mutaciones para optimismo
   const mutation = useMutation({
@@ -38,7 +50,7 @@ export const useLikeDislike = (newsId: number) => {
       return await likeOrDislikeUseCase.execute({
         newsId,
         userId: user.id,
-        reactionType: reactionType as "like" | "dislike",
+        reactionType: reactionType,
       });
     },
     onMutate: async (reactionType) => {
@@ -50,31 +62,20 @@ export const useLikeDislike = (newsId: number) => {
 
         const updatedReactions = { ...oldData };
 
-        if (oldData.userReaction) {
-          updatedReactions[`${oldData.userReaction}s`]--;
+        if (reactionType === null) {
+          if (oldData.reactionType === "like") updatedReactions.likes--;
+          if (oldData.reactionType === "dislike") updatedReactions.dislikes--;
+        }
+        if (reactionType !== oldData.reactionType) {
+          if (reactionType === "like") updatedReactions.likes++;
+          if (reactionType === "dislike") updatedReactions.dislikes++;
         }
 
-        if (reactionType !== oldData.userReaction) {
-          updatedReactions[`${reactionType}s`]++;
-        }
-
-        updatedReactions.userReaction =
-          reactionType === oldData.userReaction ? null : reactionType;
-
+        updatedReactions.reactionType = reactionType; // Actualizamos el tipo de reacción
         return updatedReactions;
       });
 
       return { previousReactions };
-    },
-    onError: (error, _, context) => {
-      // Revertir cambios optimistas
-      queryClient.setQueryData(
-        ["reactions", newsId],
-        context?.previousReactions
-      );
-      showErrorMessage(
-        error instanceof Error ? error.message : "Failed to update reaction"
-      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["reactions", newsId] });
@@ -88,8 +89,14 @@ export const useLikeDislike = (newsId: number) => {
       );
       return;
     }
-
-    mutation.mutate(type);
+    // Si la reacción actual es la misma que la nueva, la eliminamos (ponemos reactionType a null)
+    if (reactionType === type) {
+      setReactionType(null); // Remover la reacción
+      mutation.mutate(null); // Enviar null al backend
+    } else {
+      setReactionType(type); // Cambiar la reacción a "like" o "dislike"
+      mutation.mutate(type); // Enviar la nueva reacción al backend
+    }
   };
 
   return {

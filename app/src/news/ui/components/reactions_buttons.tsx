@@ -9,7 +9,7 @@ interface ReactionButtonsProps {
   likes: number;
   dislikes: number;
   userReaction: ReactionType;
-  onReaction: (type: "like" | "dislike") => void;
+  onReaction: (type: "like" | "dislike" | null) => void;
   isLoading?: boolean;
 }
 
@@ -22,7 +22,11 @@ export const ReactionsButtons = ({
 }: ReactionButtonsProps) => {
   const handleReaction = (type: "like" | "dislike") => {
     if (!isLoading) {
-      onReaction(type); // Llamada a la función que actualiza el estado de la reacción
+      if (userReaction === type) {
+        onReaction(null);
+      } else {
+        onReaction(type); // Llamada a la función que actualiza el estado de la reacción
+      }
     }
   };
 

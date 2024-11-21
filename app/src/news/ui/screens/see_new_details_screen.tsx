@@ -7,6 +7,7 @@ import { NewPost } from "../components/new_post";
 import { ReactionsButtons } from "../components/reactions_buttons";
 import { useLikeDislike } from "../../hooks/useLikeDislike";
 import { ReactionEntity } from "../../domain/entities/reaction_entity";
+import { isLoading } from "expo-font";
 
 interface SeeNewDetailsProps {
   newId: number;
@@ -46,6 +47,7 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
         dislikes={reactions?.dislikes || 0}
         userReaction={reactions?.reactionType}
         onReaction={handleReaction}
+        isLoading={isReactionsLoading}
       />
     </ScrollView>
   );
