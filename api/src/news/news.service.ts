@@ -87,7 +87,7 @@ export class NewsService {
    * @param reactionType The type of reaction ('like' or 'dislike')
    * @returns The updated news with the new reaction count
    */
-  async addReaction(newId: number, userId: string, reactionType: 'like' | 'dislike') {
+  async addReaction(newId: number, userId: string, reactionType: 'like' | 'dislike' | null) {
     const news = await this.newsRepository.findOneBy({ id: newId });
     if (!news) {
       throw new NewNotFoundError();
@@ -97,6 +97,14 @@ export class NewsService {
       throw new Error('User not found');
     }
     let reaction = await this.findReaction(newId, userId);
+    if (reactionType === null) {
+      if (reaction) {
+        // Eliminar la reacción si existe
+        await this.reactionRepository.remove(reaction);
+        return { message: 'Reacción eliminada' };
+      }
+      return { message: 'No hay reacción para eliminar' };
+    }
     if (!reaction) {
       reaction = new Reactions();
       reaction.news = news;

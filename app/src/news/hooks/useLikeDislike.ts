@@ -9,8 +9,9 @@ export const useLikeDislike = (newsId: number) => {
   const { user } = useUser();
   const queryClient = useQueryClient();
   const likeOrDislikeUseCase = new LikeOrDislikeUseCase();
+  const [reactions, setReactions] = useState(null);
 
-  const [reactionType, setReactionType] = useState<ReactionType | null>(null);
+  const [reactionType, setReactionType] = useState<ReactionType>(null);
 
   // Query para obtener datos iniciales
   const { data, isLoading, isError, refetch } = useQuery({
@@ -19,9 +20,6 @@ export const useLikeDislike = (newsId: number) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      /**if (reactionType == null) {
-        return { likes: 0, dislikes: 0, reactionType: null };
-      }**/
       // Usamos `execute` como fuente de datos iniciales
       return await likeOrDislikeUseCase.execute({
         newsId,
@@ -30,13 +28,14 @@ export const useLikeDislike = (newsId: number) => {
       });
     },
     staleTime: 5000,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     enabled: !!user,
   });
 
   useEffect(() => {
     // Establecer el estado de reactionType cuando los detalles de la noticia se cargan
-    if (data && data.reactionType) {
+    if (data && data.reactionType !== null) {
+      console.log("Datos recibidos del backend:", data);
       setReactionType(data.reactionType);
     }
   }, [data]);
@@ -89,6 +88,10 @@ export const useLikeDislike = (newsId: number) => {
       );
       return;
     }
+    if (!type) {
+      console.error("Reacción no válida");
+      return;
+    }
     // Si la reacción actual es la misma que la nueva, la eliminamos (ponemos reactionType a null)
     if (reactionType === type) {
       setReactionType(null); // Remover la reacción
@@ -100,10 +103,10 @@ export const useLikeDislike = (newsId: number) => {
   };
 
   return {
-    reactions: data || { likes: 0, dislikes: 0, reactionType: null },
+    reactions: data,
     isLoading,
     isError,
-    refetch,
+    refetchReactions: refetch,
     handleReaction,
   };
 };

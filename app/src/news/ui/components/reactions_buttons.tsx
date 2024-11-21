@@ -11,6 +11,7 @@ interface ReactionButtonsProps {
   userReaction: ReactionType;
   onReaction: (type: "like" | "dislike" | null) => void;
   isLoading?: boolean;
+  //refetchReactions: () => void;
 }
 
 export const ReactionsButtons = ({
@@ -19,7 +20,8 @@ export const ReactionsButtons = ({
   userReaction,
   onReaction,
   isLoading = false,
-}: ReactionButtonsProps) => {
+}: //refetchReactions,
+ReactionButtonsProps) => {
   const handleReaction = (type: "like" | "dislike") => {
     if (!isLoading) {
       if (userReaction === type) {
@@ -27,6 +29,7 @@ export const ReactionsButtons = ({
       } else {
         onReaction(type); // Llamada a la función que actualiza el estado de la reacción
       }
+      //refetchReactions();
     }
   };
 

@@ -8,6 +8,7 @@ import { ReactionsButtons } from "../components/reactions_buttons";
 import { useLikeDislike } from "../../hooks/useLikeDislike";
 import { ReactionEntity } from "../../domain/entities/reaction_entity";
 import { isLoading } from "expo-font";
+import { useEffect, useState } from "react";
 
 interface SeeNewDetailsProps {
   newId: number;
@@ -24,9 +25,22 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
     reactions,
     isLoading: isReactionsLoading,
     handleReaction,
+    refetchReactions,
   } = useLikeDislike(newId);
+  const [isReactionsFetched, setIsReactionsFetched] = useState(false);
 
   console.log("newId recibido:", newId);
+
+  useEffect(() => {
+    refetchReactions();
+  }, [newId, refetchReactions]);
+
+  useEffect(() => {
+    // Esperamos a que las reacciones se carguen correctamente
+    if (!isReactionsLoading && reactions) {
+      setIsReactionsFetched(true);
+    }
+  }, [reactions, isReactionsLoading]);
 
   if (query.isLoading) {
     return <FullLoaderScreen />;
@@ -35,6 +49,7 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
   if (query.isError || !query.data) {
     return <FullRetryScreen retryCallback={query.refetch} />;
   }
+  console.log("Reacciones:", reactions?.likes);
 
   return (
     <ScrollView
@@ -45,7 +60,7 @@ export const SeeNewDetailsScreen = ({ newId }: SeeNewDetailsProps) => {
       <ReactionsButtons
         likes={reactions?.likes || 0}
         dislikes={reactions?.dislikes || 0}
-        userReaction={reactions?.reactionType}
+        userReaction={reactions?.reactionType || null}
         onReaction={handleReaction}
         isLoading={isReactionsLoading}
       />
