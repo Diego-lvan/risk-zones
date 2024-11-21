@@ -124,7 +124,7 @@ export class NewsService {
       newsId: news.id,
       likes: likeCount,
       dislikes: dislikeCount,
-      reactionType,
+      reactionType: reaction.reactionType,
     };
   }
 
